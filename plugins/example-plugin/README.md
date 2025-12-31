@@ -6,7 +6,7 @@ A simple example plugin demonstrating the Claude Code plugin structure.
 
 ```bash
 # First, add the HumanInLoop marketplace (if not already added)
-/plugin marketplace add humaninloop/human-in-loop-marketplace
+/plugin marketplace add deepeshBodh/human-in-loop-marketplace
 
 # Install this plugin
 /plugin install example-plugin

@@ -36,7 +36,7 @@ human-in-loop-marketplace/
 
 ```bash
 # Add this marketplace to Claude Code
-/plugin marketplace add humaninloop/human-in-loop-marketplace
+/plugin marketplace add deepeshBodh/human-in-loop-marketplace
 
 # Install a plugin
 /plugin install example-plugin

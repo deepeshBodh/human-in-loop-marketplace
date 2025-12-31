@@ -7,7 +7,7 @@ Official Claude Code plugin marketplace for [HumanInLoop](https://humaninloop.de
 ### Add the Marketplace
 
 ```bash
-/plugin marketplace add humaninloop/human-in-loop-marketplace
+/plugin marketplace add deepeshBodh/human-in-loop-marketplace
 ```
 
 ### Browse Available Plugins
