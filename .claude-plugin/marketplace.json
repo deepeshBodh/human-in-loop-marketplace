@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "humaninloop-marketplace",
+  "version": "1.0.0",
+  "description": "Official Claude Code plugin marketplace for HumanInLoop",
+  "owner": {
+    "name": "HumanInLoop",
+    "url": "https://humaninloop.dev"
+  },
+  "plugins": [
+    {
+      "name": "example-plugin",
+      "description": "A simple example plugin demonstrating the plugin structure",
+      "source": "./plugins/example-plugin",
+      "category": "examples",
+      "version": "1.0.0",
+      "author": {
+        "name": "HumanInLoop"
+      }
+    }
+  ]
+}
