@@ -6,13 +6,13 @@ Thank you for your interest in contributing a plugin to the HumanInLoop marketpl
 
 ### 1. Create Your Plugin
 
-Use the template in `templates/plugin-template/` as a starting point:
+Copy the example plugin as a starting point:
 
 ```bash
-cp -r templates/plugin-template plugins/your-plugin-name
+cp -r plugins/example-plugin plugins/your-plugin-name
 ```
 
-Replace all `{{PLACEHOLDER}}` values in the template files.
+Then update the values in your copied plugin.
 
 ### 2. Required Files
 

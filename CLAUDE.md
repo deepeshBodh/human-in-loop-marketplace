@@ -25,9 +25,7 @@ human-in-loop-marketplace/
 ├── .claude-plugin/
 │   └── marketplace.json      # Marketplace manifest
 ├── plugins/                  # All marketplace plugins
-│   └── example-plugin/       # Example plugin
-├── templates/
-│   └── plugin-template/      # Template for new plugins
+│   └── example-plugin/       # Example plugin (copy this to create new plugins)
 ├── docs/                     # Documentation
 ├── README.md
 ├── CONTRIBUTING.md
@@ -49,7 +47,7 @@ human-in-loop-marketplace/
 
 ## Adding New Plugins
 
-1. Copy `templates/plugin-template/` to `plugins/your-plugin-name/`
-2. Update all placeholder values
+1. Copy `plugins/example-plugin/` to `plugins/your-plugin-name/`
+2. Update plugin.json, commands, and README with your plugin's info
 3. Add entry to `.claude-plugin/marketplace.json`
 4. Submit PR

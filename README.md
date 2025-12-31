@@ -43,9 +43,7 @@ human-in-loop-marketplace/
 ├── .claude-plugin/
 │   └── marketplace.json      # Marketplace manifest
 ├── plugins/                  # All marketplace plugins
-│   └── example-plugin/       # Example plugin
-├── templates/
-│   └── plugin-template/      # Template for new plugins
+│   └── example-plugin/       # Example plugin (copy to create new plugins)
 ├── docs/                     # Documentation
 ├── README.md                 # This file
 ├── CONTRIBUTING.md           # Contribution guidelines
