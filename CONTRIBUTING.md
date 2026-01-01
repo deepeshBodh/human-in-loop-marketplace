@@ -6,10 +6,14 @@ Thank you for your interest in contributing a plugin to the HumanInLoop marketpl
 
 ### 1. Create Your Plugin
 
-Copy the example plugin as a starting point:
+Copy an existing plugin as a starting point:
 
 ```bash
-cp -r plugins/example-plugin plugins/your-plugin-name
+# For simpler plugins (commands only)
+cp -r plugins/humaninloop-constitution plugins/your-plugin-name
+
+# For complex multi-agent plugins
+cp -r plugins/humaninloop plugins/your-plugin-name
 ```
 
 Then update the values in your copied plugin.
@@ -26,13 +30,19 @@ your-plugin-name/
 │   └── *.md
 ├── agents/              # Subagents (optional)
 │   └── *.md
+├── check-modules/       # Validation check modules (optional)
+│   └── *.md
+├── scripts/             # Shell scripts (optional)
+│   └── *.sh
+├── templates/           # Workflow templates (optional)
+│   └── *.md
 ├── skills/              # Agent skills (optional)
 │   └── skill-name/
 │       └── SKILL.md
 ├── hooks/               # Hooks (optional)
 │   └── hooks.json
 ├── README.md            # REQUIRED: Plugin documentation
-└── LICENSE              # REQUIRED: License file
+└── LICENSE              # RECOMMENDED: License file
 ```
 
 ### 3. Plugin Manifest (`plugin.json`)
@@ -44,12 +54,17 @@ your-plugin-name/
   "description": "Brief description of what your plugin does",
   "author": {
     "name": "Your Name",
-    "email": "your@email.com"
+    "url": "https://yoursite.com"
   },
   "license": "MIT",
-  "keywords": ["relevant", "keywords"]
+  "keywords": ["relevant", "keywords"],
+  "commands": "./commands/",
+  "agents": "./agents/",
+  "checkModules": "./check-modules/"
 }
 ```
+
+Note: Only include `commands`, `agents`, and `checkModules` fields if your plugin uses them.
 
 ### 4. Submit a Pull Request
 
@@ -83,11 +98,13 @@ your-plugin-name/
 ### Categories
 
 Use one of these categories:
+- `workflow` - Multi-step development workflows
 - `development` - Dev tools, linting, formatting
 - `productivity` - Workflow automation
 - `documentation` - Doc generation, READMEs
 - `testing` - Test runners, coverage
 - `deployment` - CI/CD, deployment helpers
+- `configuration` - Project setup and configuration
 - `examples` - Example/demo plugins
 
 ### Quality Checklist

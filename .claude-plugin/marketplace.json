@@ -9,9 +9,9 @@
   },
   "plugins": [
     {
-      "name": "humaninloop-spec",
-      "source": "./plugins/humaninloop-spec",
-      "description": "Multi-agent specification workflow with integrated quality validation"
+      "name": "humaninloop",
+      "source": "./plugins/humaninloop",
+      "description": "Specification-driven development workflow: specify → plan → tasks → implement"
     },
     {
       "name": "humaninloop-constitution",

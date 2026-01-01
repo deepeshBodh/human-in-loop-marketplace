@@ -10,23 +10,43 @@ Official Claude Code plugin marketplace for [HumanInLoop](https://humaninloop.de
 /plugin marketplace add deepeshBodh/human-in-loop-marketplace
 ```
 
-### Browse Available Plugins
+### Install Plugins
+
+```bash
+# Install constitution plugin first (required by humaninloop)
+/plugin install humaninloop-constitution
+/humaninloop-constitution:setup
+
+# Install main workflow plugin
+/plugin install humaninloop
+```
+
+### Browse Installed Plugins
 
 ```bash
 /plugin
 ```
 
-### Install a Plugin
-
-```bash
-/plugin install example-plugin
-```
-
 ## Available Plugins
 
-| Plugin | Description | Category |
+| Plugin | Description | Commands |
 |--------|-------------|----------|
-| [example-plugin](./plugins/example-plugin) | A simple example plugin demonstrating the plugin structure | examples |
+| [humaninloop](./plugins/humaninloop) | Specification-driven development workflow: specify → plan → tasks → implement | `/humaninloop:specify`, `/humaninloop:plan` |
+| [humaninloop-constitution](./plugins/humaninloop-constitution) | Project constitution setup for HumanInLoop workflows | `/humaninloop-constitution:setup` |
+
+### humaninloop
+
+Multi-agent specification-driven development workflow with integrated quality validation.
+
+**Agents:** 11 specialized agents for spec writing, validation, planning, and research
+**Commands:** `/humaninloop:specify`, `/humaninloop:plan`
+**Requires:** `humaninloop-constitution` plugin
+
+### humaninloop-constitution
+
+Project constitution setup defining core principles, governance rules, and development standards.
+
+**Commands:** `/humaninloop-constitution:setup`
 
 ## Contributing
 
@@ -41,13 +61,21 @@ Want to add your plugin to the marketplace? See [CONTRIBUTING.md](./CONTRIBUTING
 ```
 human-in-loop-marketplace/
 ├── .claude-plugin/
-│   └── marketplace.json      # Marketplace manifest
-├── plugins/                  # All marketplace plugins
-│   └── example-plugin/       # Example plugin (copy to create new plugins)
-├── docs/                     # Documentation
-├── README.md                 # This file
-├── CONTRIBUTING.md           # Contribution guidelines
-└── LICENSE                   # MIT license
+│   └── marketplace.json           # Marketplace manifest
+├── plugins/
+│   ├── humaninloop/               # Main workflow plugin
+│   │   ├── agents/                # 11 multi-agent workflow agents
+│   │   ├── commands/              # specify, plan commands
+│   │   ├── check-modules/         # Validation check modules
+│   │   ├── scripts/               # Shell utilities
+│   │   └── templates/             # Workflow templates
+│   └── humaninloop-constitution/  # Constitution setup plugin
+│       ├── commands/              # setup command
+│       └── templates/             # Constitution template
+├── docs/                          # Documentation
+├── README.md
+├── CONTRIBUTING.md
+└── LICENSE
 ```
 
 ## License
