@@ -18,6 +18,7 @@
     "sdlc"
   ],
   "commands": "./commands/",
+  "skills": "./skills/",
   "agents": [
     "./agents/checklist-context-analyzer.md",
     "./agents/checklist-writer.md",
