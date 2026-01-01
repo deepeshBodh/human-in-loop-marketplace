@@ -1,6 +1,6 @@
 ---
 name: plan-workflow
-description: Reference manual for the plan workflow phases (Research, Domain Model, Contracts, Validation). Provides shared patterns for context loading, brownfield handling, and phase-specific procedures. Referenced by all plan agents.
+description: Reference manual for the plan workflow phases (Research, Domain Model, Contracts, Validation). Provides shared patterns for context loading, brownfield handling, and phase-specific procedures. Referenced by plan-builder and plan-validator agents.
 ---
 
 # Plan Workflow Skill
@@ -54,7 +54,7 @@ Phase 3: Validation    → Final cross-artifact validation
 
 ## Common Constraints
 
-All plan agents share these constraints:
+Both plan-builder and plan-validator share these constraints:
 - **No user interaction** - Supervisor handles communication
 - **Autonomous execution** - Complete phase without external input
 - **Context sync required** - Update plan-context.md and index.md
