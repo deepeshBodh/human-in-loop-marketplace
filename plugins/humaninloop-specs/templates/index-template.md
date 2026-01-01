@@ -116,11 +116,24 @@
 > Classified gaps from checklist validation awaiting resolution.
 > Priority determines termination: Critical+Important must be zero to complete.
 
-| Priority | Gap ID | CHK Source | FR Reference | Question | Status |
-|----------|--------|------------|--------------|----------|--------|
+| Priority | Gap ID | CHK Source | FR Reference | Question | Status | Synced |
+|----------|--------|------------|--------------|----------|--------|--------|
 
 **Priority**: `Critical` (MUST resolve) | `Important` (MUST resolve) | `Minor` (CAN defer)
 **Status**: `pending` | `clarifying` | `resolved` | `deferred`
+**Synced**: `✓` (synced to checklist) | empty (not yet synced)
+
+---
+
+## Checklist Sync State
+
+> Tracks synchronization between Gap Priority Queue and checklist files.
+> Updated by checklist-agent (update mode) after gaps are resolved.
+
+| Checklist | Total Items | Checked | Pending | Last Sync |
+|-----------|-------------|---------|---------|-----------|
+
+**Updated by**: checklist-agent (update mode)
 
 ---
 

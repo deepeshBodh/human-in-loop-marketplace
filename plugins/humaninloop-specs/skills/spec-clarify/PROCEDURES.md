@@ -96,8 +96,21 @@ Verify against quality criteria:
 
 ---
 
-## Phase 7: Checklist Updates
+## Phase 7: Trigger Checklist Sync
 
-Update the requirements checklist to reflect:
-- Resolved clarification items (checked)
-- Any remaining issues or assumptions
+> Checklist file updates are handled by checklist-agent (update mode).
+> spec-clarify marks gaps as resolved in index.md; checklist-agent syncs checkboxes.
+
+After completing Phase 6 (Context Updates):
+
+1. Verify Gap Priority Queue has resolved gaps with `Synced` column empty
+2. Add handoff note indicating checklist sync is needed:
+   ```markdown
+   ### Handoff Notes
+   - Gaps resolved: G-001, G-002
+   - Checklist sync required: Yes
+   - Ready for: checklist-agent (update mode)
+   ```
+3. Supervisor will invoke checklist-agent to sync checkboxes to checklist file
+
+**Note**: Do NOT directly modify checklist files. The checklist-agent owns all checklist file mutations to maintain single source of truth.

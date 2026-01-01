@@ -18,6 +18,7 @@ Comprehensive guidance for processing user answers to clarification questions an
 | Apply cascading updates | [PROCEDURES.md](PROCEDURES.md) - Phase 3 |
 | Validate quality | [PROCEDURES.md](PROCEDURES.md) - Phase 5 |
 | Update context files | [PROCEDURES.md](PROCEDURES.md) - Phase 6 |
+| Trigger checklist sync | [PROCEDURES.md](PROCEDURES.md) - Phase 7 |
 | Handle round 3 (final) | [PATTERNS.md](PATTERNS.md) - Round 3 Special Handling |
 | See application examples | [PATTERNS.md](PATTERNS.md) - Application Patterns |
 
@@ -38,7 +39,7 @@ Phase 5: Quality Validation
     ↓
 Phase 6: Context Updates (specify-context.md, index.md)
     ↓
-Phase 7: Checklist Updates
+Phase 7: Trigger Checklist Sync (handoff to checklist-agent update mode)
 ```
 
 ## Key Concepts
