@@ -6,6 +6,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and this pro
 
 ---
 
+## [0.2.4] - 2026-01-01
+
+Stable release of the constitution plugin.
+
+### humaninloop-constitution 1.0.0
+
+#### Milestone
+- **First stable release** - The constitution plugin has reached feature parity with speckit and is now production-ready
+- Stable API with semantic versioning guarantees going forward
+- Tested and validated for all core constitution setup workflows
+
+---
+
 ## [0.2.3] - 2026-01-01
 
 Improved UX for empty input workaround - users can now re-enter input in the terminal.
@@ -134,6 +147,7 @@ Initial marketplace scaffold.
 
 ---
 
+[0.2.4]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.4
 [0.2.3]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.3
 [0.2.2]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.2
 [0.2.1]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.1
