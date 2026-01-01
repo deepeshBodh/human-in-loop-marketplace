@@ -6,6 +6,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and this pro
 
 ---
 
+## [0.2.2] - 2026-01-01
+
+Workaround for Claude Code `@` file reference parsing bug affecting plugin command inputs.
+
+### humaninloop 0.2.2
+
+#### Fixes
+- Added empty-input detection to all 6 commands (`specify`, `plan`, `tasks`, `analyze`, `checklist`, `implement`)
+- When input is empty, commands now prompt user with AskUserQuestion to check if input was lost due to Claude Code's `@` parsing bug
+- Users can re-enter input or continue without input
+
+### humaninloop-constitution 0.1.2
+
+#### Fixes
+- Added empty-input detection to `setup` command with same workaround
+
+---
+
 ## [0.2.1] - 2026-01-01
 
 Plugin manifest fix for Claude Code compatibility.
@@ -98,6 +116,7 @@ Initial marketplace scaffold.
 
 ---
 
+[0.2.2]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.2
 [0.2.1]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.1
 [0.2.0]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.0
 [0.1.0]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.1.0

@@ -14,6 +14,26 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+### Empty Input Check
+
+If `$ARGUMENTS` is empty (blank string with no content), use AskUserQuestion to handle a known Claude Code bug where inputs containing `@` file references don't reach plugin commands:
+
+```
+AskUserQuestion(
+  questions: [{
+    question: "⚠️ Known Issue: Input may have been lost\n\nClaude Code has a bug where inputs containing @ file references don't reach plugin commands.\n\nIf you intended to provide input, please enter it below. You can try using @ references again - they may work now. If not, describe the file path without @ (e.g., \"the file src/foo.ts\" instead of \"@src/foo.ts\").",
+    header: "Input",
+    options: [
+      {label: "Continue without input", description: "Proceed with no input provided"}
+    ],
+    multiSelect: false
+  }]
+)
+```
+
+- If user provides input via the "Other" option → use that as the effective `$ARGUMENTS`
+- If user selects "Continue without input" → proceed with empty input (existing behavior)
+
 ## Outline
 
 1. Run `${CLAUDE_PLUGIN_ROOT}/scripts/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").

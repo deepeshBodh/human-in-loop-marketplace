@@ -14,6 +14,26 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+### Empty Input Check
+
+If `$ARGUMENTS` is empty (blank string with no content), use AskUserQuestion to handle a known Claude Code bug where inputs containing `@` file references don't reach plugin commands:
+
+```
+AskUserQuestion(
+  questions: [{
+    question: "⚠️ Known Issue: Input may have been lost\n\nClaude Code has a bug where inputs containing @ file references don't reach plugin commands.\n\nIf you intended to provide input, please enter it below. You can try using @ references again - they may work now. If not, describe the file path without @ (e.g., \"the file src/foo.ts\" instead of \"@src/foo.ts\").",
+    header: "Input",
+    options: [
+      {label: "Continue without input", description: "Proceed with no input provided"}
+    ],
+    multiSelect: false
+  }]
+)
+```
+
+- If user provides input via the "Other" option → use that as the effective `$ARGUMENTS`
+- If user selects "Continue without input" → proceed with empty input (existing behavior)
+
 ## Outline
 
 You are updating the project constitution at `.humaninloop/memory/constitution.md`. This file is a TEMPLATE containing placeholder tokens in square brackets (e.g. `[PROJECT_NAME]`, `[PRINCIPLE_1_NAME]`). Your job is to (a) collect/derive concrete values, (b) fill the template precisely, and (c) propagate any amendments across dependent artifacts.
