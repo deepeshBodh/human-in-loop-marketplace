@@ -50,6 +50,7 @@ Follow this execution flow:
    - Read `.humaninloop/templates/plan-template.md` (if exists) and ensure any "Constitution Check" or rules align with updated principles.
    - Read `.humaninloop/templates/spec-template.md` (if exists) for scope/requirements alignment—update if constitution adds/removes mandatory sections or constraints.
    - Read `.humaninloop/templates/tasks-template.md` (if exists) and ensure task categorization reflects new or removed principle-driven task types (e.g., observability, versioning, testing discipline).
+   - Read `.humaninloop/commands/*.md` (if exists) to verify no outdated references or agent-specific hardcoding conflicts with constitution principles.
    - Read any runtime guidance docs (e.g., `README.md`, `docs/quickstart.md`, or agent-specific guidance files if present). Update references to principles changed.
 
 7. Produce a Sync Impact Report (prepend as an HTML comment at top of the constitution file after update):
@@ -57,7 +58,7 @@ Follow this execution flow:
    - List of modified principles (old title → new title if renamed)
    - Added sections
    - Removed sections
-   - Templates requiring updates (✓ updated / ⚠ pending) with file paths
+   - Templates requiring updates (✅ updated / ⚠ pending) with file paths
    - Follow-up TODOs if any placeholders intentionally deferred.
 
 8. Validation before final output:
