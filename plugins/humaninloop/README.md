@@ -101,9 +101,7 @@ Generate implementation tasks from an existing plan.
 | Agent | Purpose |
 |-------|---------|
 | **Codebase Discovery Agent** | Analyzes existing code for brownfield considerations |
-| **Plan Research Agent** | Resolves technical unknowns and makes technology decisions |
-| **Plan Domain Model Agent** | Extracts entities and creates data model |
-| **Plan Contract Agent** | Designs API contracts and integration scenarios |
+| **Plan Builder Agent** | Builds plan artifacts for any phase (research, domain model, contracts) |
 | **Plan Validator Agent** | Validates artifacts against check modules |
 
 ### Tasks Workflow Agents
