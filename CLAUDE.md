@@ -8,7 +8,40 @@ This repository contains the HumanInLoop (HIL) Claude Code Plugin Marketplace - 
 
 ## Related Repositories
 
-- **human-in-loop-experiments** (`deepeshBodh/human-in-loop-experiments`): Contains experimental artifacts that will be used as the source material for creating marketplace plugins.
+- **human-in-loop-experiments** (`deepeshBodh/human-in-loop-experiments`): Experimental repository where plugin adaptations are developed and tested before being imported into this marketplace. This is the staging ground for new features and migrations.
+
+## Reference Artefacts (docs/speckit-artefacts/)
+
+The `docs/speckit-artefacts/` folder contains a snapshot of the original **speckit** toolkit - the inspiration for the humaninloop plugins.
+
+### Important Context
+
+1. **Speckit is inspiration, not specification**: The humaninloop plugins are a **fundamental rearchitecture**, not a direct migration or port of speckit. They are loosely similar but architecturally different.
+
+2. **No behavioral parity expected**: NEVER assume humaninloop plugins should behave the same as speckit. The plugins may work differently by design. Only expect matching behavior if the user explicitly confirms this expectation.
+
+3. **Read-only reference**: These artefacts are imported snapshots for reference only. All active development happens in `plugins/`. Do not modify files in `docs/speckit-artefacts/`.
+
+4. **Development workflow**:
+   - **speckit** (original inspiration)
+   - → **human-in-loop-experiments** (experimental adaptation)
+   - → **human-in-loop-marketplace** (clean production version)
+
+5. **Need-based migration**: Migration from speckit concepts is ongoing and selective - only what serves humaninloop's needs is adopted and restructured for the multi-agent plugin architecture.
+
+### Artefacts Structure
+
+```
+docs/speckit-artefacts/
+├── .claude/                    # Original speckit agent files
+│   ├── speckit.specify.md
+│   ├── speckit.plan.md
+│   └── ...
+└── .specify/                   # Original speckit resources
+    ├── memory/
+    ├── scripts/
+    └── templates/
+```
 
 ## Development Guidelines
 
@@ -38,7 +71,9 @@ human-in-loop-marketplace/
 │       │   └── plugin.json
 │       ├── commands/              # /humaninloop-constitution:setup
 │       └── templates/
-├── docs/                          # Documentation
+├── docs/
+│   ├── claude-plugin-documentation.md
+│   └── speckit-artefacts/         # READ-ONLY reference (original speckit)
 ├── README.md
 ├── CONTRIBUTING.md
 └── LICENSE
