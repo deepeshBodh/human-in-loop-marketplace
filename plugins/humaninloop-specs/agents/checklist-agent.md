@@ -122,14 +122,13 @@ Run the prerequisites script:
 ${CLAUDE_PLUGIN_ROOT}/scripts/check-prerequisites.sh --json --paths-only
 ```
 
-Extract: `FEATURE_DIR`, `FEATURE_SPEC`, `IMPL_PLAN`, `TASKS`
+Extract: `FEATURE_DIR`, `FEATURE_SPEC`
 
 **Step 1.2: Validate and Read Index**
 
 1. Check `FEATURE_DIR` exists
 2. Read `index.md` at `FEATURE_DIR/.workflow/index.md`
 3. Verify `spec.md` exists (REQUIRED)
-4. Check which optional documents exist (plan.md, tasks.md)
 
 **Step 1.3: Determine Mode**
 
@@ -162,13 +161,6 @@ Check conditions to determine operating mode:
 - Note success criteria (SC-xxx)
 - Identify edge cases mentioned
 - Find [NEEDS CLARIFICATION] markers
-
-**plan.md (if exists)**:
-- Technical approach decisions
-- Architecture components
-
-**tasks.md (if exists)**:
-- Task coverage mapping
 
 ---
 
