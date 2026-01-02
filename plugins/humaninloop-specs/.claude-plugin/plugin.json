@@ -7,6 +7,9 @@
     "url": "https://humaninloop.dev"
   },
   "license": "MIT",
+  "dependencies": [
+    "humaninloop-core"
+  ],
   "keywords": [
     "specification",
     "requirements",
@@ -22,7 +25,7 @@
   "agents": [
     "./agents/scaffold-agent.md",
     "./agents/spec-writer.md",
-    "./agents/spec-clarify.md",
+    "./agents/gap-classifier.md",
     "./agents/checklist-agent.md"
   ]
 }
