@@ -59,12 +59,12 @@ AskUserQuestion(
 │  └── Copy tasks-context template                                     │
 │                                                                      │
 │  PHASE T1: Planning Loop (max 3 iterations)                          │
-│  ├── Spawn task-planner agent → task-mapping.md                      │
+│  ├── Spawn task-builder agent (phase=1) → task-mapping.md            │
 │  ├── Spawn task-validator (mapping-checks)                           │
 │  └── Loop if gaps, escalate if stale                                 │
 │                                                                      │
 │  PHASE T2: Generation Loop (max 3 iterations)                        │
-│  ├── Spawn task-generator agent → tasks.md                           │
+│  ├── Spawn task-builder agent (phase=2) → tasks.md                   │
 │  ├── Spawn task-validator (task-checks)                              │
 │  └── Loop if gaps, escalate if stale                                 │
 │                                                                      │
@@ -82,9 +82,8 @@ AskUserQuestion(
 
 | Agent | Type | Purpose | Model |
 |-------|------|---------|-------|
-| task-planner | Specialized | Extract from design docs, map to user stories, identify brownfield | Sonnet |
-| task-generator | Specialized | Generate task list with proper format and structure | Sonnet |
-| task-validator | Modular | Validate artifacts against check modules | Sonnet |
+| task-builder | Phase-aware | T1: Map to stories, T2: Generate task list | Opus |
+| validator-agent (core) | Generic | Validate artifacts against check modules | Sonnet |
 
 ---
 
@@ -279,13 +278,14 @@ FUNCTION check_termination():
 
 **LOOP** (max 3 iterations):
 
-1. **Spawn Task-Planner Agent**:
+1. **Spawn Task-Builder Agent (Phase 1)**:
    ```
    Task(
-     subagent_type: "task-planner",
-     description: "Plan task mappings",
+     subagent_type: "task-builder",
+     description: "Map to stories",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
+       phase: 1,
        input_docs: {
          spec_path: "specs/{feature_id}/spec.md",
          plan_path: "specs/{feature_id}/plan.md",
@@ -296,7 +296,6 @@ FUNCTION check_termination():
        constitution_path: ".humaninloop/memory/constitution.md",
        index_path: "specs/{feature_id}/.workflow/index.md",
        tasks_context_path: "specs/{feature_id}/.workflow/tasks-context.md",
-       phase: "T1",
        iteration: phase_iteration,
        gaps_to_resolve: pending_gaps,
        brownfield: {
@@ -339,20 +338,20 @@ FUNCTION check_termination():
 4. **Spawn Validator (mapping-checks)**:
    ```
    Task(
-     subagent_type: "task-validator",
+     subagent_type: "humaninloop-core:validator-agent",
      description: "Validate mapping",
      prompt: JSON.stringify({
-       feature_id: "{feature_id}",
-       phase: "T1",
+       artifact_paths: [
+         "specs/{feature_id}/task-mapping.md",
+         "specs/{feature_id}/spec.md",
+         "specs/{feature_id}/data-model.md",
+         "specs/{feature_id}/contracts/"
+       ],
        check_module: "${CLAUDE_PLUGIN_ROOT}/check-modules/mapping-checks.md",
-       artifacts: {
-         mapping_path: "specs/{feature_id}/task-mapping.md",
-         spec_path: "specs/{feature_id}/spec.md",
-         datamodel_path: "specs/{feature_id}/data-model.md",
-         contracts_path: "specs/{feature_id}/contracts/"
-       },
+       context_path: "specs/{feature_id}/.workflow/tasks-context.md",
        index_path: "specs/{feature_id}/.workflow/index.md",
-       tasks_context_path: "specs/{feature_id}/.workflow/tasks-context.md",
+       artifact_type: "task",
+       phase: "T1",
        iteration: phase_iteration
      })
    )
@@ -380,19 +379,19 @@ FUNCTION check_termination():
 
 **LOOP** (max 3 iterations):
 
-1. **Spawn Task-Generator Agent**:
+1. **Spawn Task-Builder Agent (Phase 2)**:
    ```
    Task(
-     subagent_type: "task-generator",
+     subagent_type: "task-builder",
      description: "Generate tasks",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
+       phase: 2,
        mapping_path: "specs/{feature_id}/task-mapping.md",
        plan_path: "specs/{feature_id}/plan.md",
        tasks_template_path: "${CLAUDE_PLUGIN_ROOT}/templates/tasks-template.md",
        index_path: "specs/{feature_id}/.workflow/index.md",
        tasks_context_path: "specs/{feature_id}/.workflow/tasks-context.md",
-       phase: "T2",
        iteration: phase_iteration,
        gaps_to_resolve: pending_gaps,
        brownfield_risks: brownfield_risks_from_mapping
@@ -412,19 +411,19 @@ FUNCTION check_termination():
 3. **Spawn Validator (task-checks)**:
    ```
    Task(
-     subagent_type: "task-validator",
+     subagent_type: "humaninloop-core:validator-agent",
      description: "Validate tasks",
      prompt: JSON.stringify({
-       feature_id: "{feature_id}",
-       phase: "T2",
+       artifact_paths: [
+         "specs/{feature_id}/tasks.md",
+         "specs/{feature_id}/task-mapping.md",
+         "specs/{feature_id}/spec.md"
+       ],
        check_module: "${CLAUDE_PLUGIN_ROOT}/check-modules/task-checks.md",
-       artifacts: {
-         tasks_path: "specs/{feature_id}/tasks.md",
-         mapping_path: "specs/{feature_id}/task-mapping.md",
-         spec_path: "specs/{feature_id}/spec.md"
-       },
+       context_path: "specs/{feature_id}/.workflow/tasks-context.md",
        index_path: "specs/{feature_id}/.workflow/index.md",
-       tasks_context_path: "specs/{feature_id}/.workflow/tasks-context.md",
+       artifact_type: "task",
+       phase: "T2",
        iteration: phase_iteration
      })
    )
@@ -648,7 +647,7 @@ All agents share state via the **Hybrid Context Architecture**:
 3. **Codebase Inventory** (`codebase-inventory.json`):
    - Read from plan workflow (if exists)
    - Used for brownfield marker decisions
-   - Referenced by task-planner and task-generator
+   - Referenced by task-builder (both phases)
 
 4. **Filesystem**: Agents read/write artifacts (task-mapping.md, tasks.md)
 

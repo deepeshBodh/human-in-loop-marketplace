@@ -65,17 +65,17 @@ AskUserQuestion(
 │                                                                      │
 │  PHASE B: Agent Loop (C-lite)                                        │
 │  ├── B0: Research Phase (max 3 iterations)                          │
-│  │   ├── Spawn plan-research agent                                  │
+│  │   ├── Spawn plan-builder (phase=0)                               │
 │  │   ├── Spawn plan-validator (research-checks)                     │
 │  │   └── Loop if gaps, escalate if stale                            │
 │  │                                                                   │
 │  ├── B1: Domain Model Phase (max 3 iterations)                      │
-│  │   ├── Spawn plan-domain-model agent                              │
+│  │   ├── Spawn plan-builder (phase=1)                               │
 │  │   ├── Spawn plan-validator (model-checks)                        │
 │  │   └── Loop if gaps, escalate if stale                            │
 │  │                                                                   │
 │  ├── B2: Contract Phase (max 3 iterations)                          │
-│  │   ├── Spawn plan-contract agent                                  │
+│  │   ├── Spawn plan-builder (phase=2)                               │
 │  │   ├── Spawn plan-validator (contract-checks)                     │
 │  │   └── Loop if gaps, escalate if stale                            │
 │  │                                                                   │
@@ -98,10 +98,8 @@ AskUserQuestion(
 | Agent | Type | Purpose | Model |
 |-------|------|---------|-------|
 | codebase-discovery | Specialized | Analyze existing codebase, detect collisions (Phase A0) | Sonnet |
-| plan-research | Specialized | Resolve unknowns, document decisions | Sonnet |
-| plan-domain-model | Specialized | Extract entities, relationships, validation | Opus |
-| plan-contract | Specialized | Map endpoints, schemas, quickstart | Opus |
-| plan-validator | Modular | Validate artifacts against check modules | Sonnet |
+| plan-builder | Phase-aware | Build artifacts for phase 0/1/2 (research, domain, contracts) | Opus |
+| validator-agent (core) | Generic | Validate artifacts against check modules | Sonnet |
 
 ---
 
@@ -372,7 +370,7 @@ if (specify.loop_status != "completed"):
         header: "Entry Gate",
         options: [
           {label: "Proceed anyway (Recommended)", description: "Plan with current spec, may have gaps"},
-          {label: "Complete specification first", description: "Return to /humaninloop:specify"},
+          {label: "Complete specification first", description: "Return to /humaninloop-specs:specify"},
           {label: "Abort", description: "Cancel planning workflow"}
         ],
         multiSelect: false
@@ -495,10 +493,10 @@ FUNCTION check_termination():
 
 **LOOP** (max 3 iterations):
 
-1. **Spawn Research Agent**:
+1. **Spawn Plan Builder (Phase 0)**:
    ```
    Task(
-     subagent_type: "plan-research",
+     subagent_type: "plan-builder",
      description: "Research unknowns",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
@@ -522,19 +520,19 @@ FUNCTION check_termination():
 3. **Spawn Validator (research-checks)**:
    ```
    Task(
-     subagent_type: "plan-validator",
+     subagent_type: "humaninloop-core:validator-agent",
      description: "Validate research",
      prompt: JSON.stringify({
-       feature_id: "{feature_id}",
-       phase: 0,
+       artifact_paths: [
+         "specs/{feature_id}/spec.md",
+         "specs/{feature_id}/research.md"
+       ],
        check_module: "${CLAUDE_PLUGIN_ROOT}/check-modules/research-checks.md",
-       artifacts: {
-         spec_path: "specs/{feature_id}/spec.md",
-         research_path: "specs/{feature_id}/research.md"
-       },
-       constitution_path: ".humaninloop/memory/constitution.md",
+       context_path: "specs/{feature_id}/.workflow/plan-context.md",
        index_path: "specs/{feature_id}/.workflow/index.md",
-       plan_context_path: "specs/{feature_id}/.workflow/plan-context.md",
+       constitution_path: ".humaninloop/memory/constitution.md",
+       artifact_type: "plan",
+       phase: "0",
        iteration: phase_iteration
      })
    )
@@ -562,10 +560,10 @@ FUNCTION check_termination():
 
 **LOOP** (max 3 iterations):
 
-1. **Spawn Domain Model Agent**:
+1. **Spawn Plan Builder (Phase 1)**:
    ```
    Task(
-     subagent_type: "plan-domain-model",
+     subagent_type: "plan-builder",
      description: "Create data model",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
@@ -593,20 +591,20 @@ FUNCTION check_termination():
 4. **Spawn Validator (model-checks)**:
    ```
    Task(
-     subagent_type: "plan-validator",
+     subagent_type: "humaninloop-core:validator-agent",
      description: "Validate data model",
      prompt: JSON.stringify({
-       feature_id: "{feature_id}",
-       phase: 1,
+       artifact_paths: [
+         "specs/{feature_id}/spec.md",
+         "specs/{feature_id}/research.md",
+         "specs/{feature_id}/data-model.md"
+       ],
        check_module: "${CLAUDE_PLUGIN_ROOT}/check-modules/model-checks.md",
-       artifacts: {
-         spec_path: "specs/{feature_id}/spec.md",
-         research_path: "specs/{feature_id}/research.md",
-         datamodel_path: "specs/{feature_id}/data-model.md"
-       },
-       constitution_path: ".humaninloop/memory/constitution.md",
+       context_path: "specs/{feature_id}/.workflow/plan-context.md",
        index_path: "specs/{feature_id}/.workflow/index.md",
-       plan_context_path: "specs/{feature_id}/.workflow/plan-context.md",
+       constitution_path: ".humaninloop/memory/constitution.md",
+       artifact_type: "plan",
+       phase: "1",
        iteration: phase_iteration
      })
    )
@@ -626,10 +624,10 @@ FUNCTION check_termination():
 
 **LOOP** (max 3 iterations):
 
-1. **Spawn Contract Agent**:
+1. **Spawn Plan Builder (Phase 2)**:
    ```
    Task(
-     subagent_type: "plan-contract",
+     subagent_type: "plan-builder",
      description: "Create API contracts",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
@@ -659,22 +657,22 @@ FUNCTION check_termination():
 4. **Spawn Validator (contract-checks)**:
    ```
    Task(
-     subagent_type: "plan-validator",
+     subagent_type: "humaninloop-core:validator-agent",
      description: "Validate contracts",
      prompt: JSON.stringify({
-       feature_id: "{feature_id}",
-       phase: 2,
+       artifact_paths: [
+         "specs/{feature_id}/spec.md",
+         "specs/{feature_id}/research.md",
+         "specs/{feature_id}/data-model.md",
+         "specs/{feature_id}/contracts/",
+         "specs/{feature_id}/quickstart.md"
+       ],
        check_module: "${CLAUDE_PLUGIN_ROOT}/check-modules/contract-checks.md",
-       artifacts: {
-         spec_path: "specs/{feature_id}/spec.md",
-         research_path: "specs/{feature_id}/research.md",
-         datamodel_path: "specs/{feature_id}/data-model.md",
-         contracts_path: "specs/{feature_id}/contracts/",
-         quickstart_path: "specs/{feature_id}/quickstart.md"
-       },
-       constitution_path: ".humaninloop/memory/constitution.md",
+       context_path: "specs/{feature_id}/.workflow/plan-context.md",
        index_path: "specs/{feature_id}/.workflow/index.md",
-       plan_context_path: "specs/{feature_id}/.workflow/plan-context.md",
+       constitution_path: ".humaninloop/memory/constitution.md",
+       artifact_type: "plan",
+       phase: "2",
        iteration: phase_iteration
      })
    )
@@ -695,22 +693,22 @@ FUNCTION check_termination():
 1. **Spawn Validator (final-checks)**:
    ```
    Task(
-     subagent_type: "plan-validator",
+     subagent_type: "humaninloop-core:validator-agent",
      description: "Final validation",
      prompt: JSON.stringify({
-       feature_id: "{feature_id}",
-       phase: 3,
+       artifact_paths: [
+         "specs/{feature_id}/spec.md",
+         "specs/{feature_id}/research.md",
+         "specs/{feature_id}/data-model.md",
+         "specs/{feature_id}/contracts/",
+         "specs/{feature_id}/quickstart.md"
+       ],
        check_module: "${CLAUDE_PLUGIN_ROOT}/check-modules/final-checks.md",
-       artifacts: {
-         spec_path: "specs/{feature_id}/spec.md",
-         research_path: "specs/{feature_id}/research.md",
-         datamodel_path: "specs/{feature_id}/data-model.md",
-         contracts_path: "specs/{feature_id}/contracts/",
-         quickstart_path: "specs/{feature_id}/quickstart.md"
-       },
-       constitution_path: ".humaninloop/memory/constitution.md",
+       context_path: "specs/{feature_id}/.workflow/plan-context.md",
        index_path: "specs/{feature_id}/.workflow/index.md",
-       plan_context_path: "specs/{feature_id}/.workflow/plan-context.md",
+       constitution_path: ".humaninloop/memory/constitution.md",
+       artifact_type: "plan",
+       phase: "3",
        iteration: 1
      })
    )
@@ -893,7 +891,7 @@ Compile the full chain in index.md:
 The specification workflow is not complete.
 
 Options:
-1. Run `/humaninloop:specify` to complete the spec
+1. Run `/humaninloop-specs:specify` to complete the spec
 2. Use `/humaninloop:plan --force` to proceed anyway
 ```
 
