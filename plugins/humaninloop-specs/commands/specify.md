@@ -49,20 +49,19 @@ AskUserQuestion(
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │  PHASE A: Initial Specification                                      │
-│  ├── Scaffold Agent                                                  │
-│  ├── Spec Writer Agent                                               │
-│  ├── Checklist Agent (analyze + generate)                           │
-│  └── Spec Clarify Agent (classify gaps)                             │
+│  ├── A1: Scaffold Agent (create branch, directories)                │
+│  ├── A2: Spec Writer Agent (write spec content)                     │
+│  ├── A3: Validator Agent (validate with spec-checks.md)             │
+│  ├── A4: Checklist Agent (generate requirements checklist)          │
+│  └── A5: Spec Clarify Agent (classify gaps)                         │
 │                                                                      │
 │  PHASE B: Priority Loop                                              │
 │  WHILE (critical + important > 0) AND (iteration < 10):             │
-│  ├── Read Gap Priority Queue from index.md                          │
-│  ├── Check termination conditions                                    │
-│  ├── Present gaps via AskUserQuestion                               │
-│  ├── Spec Clarify Agent (apply answers)                             │
-│  ├── Re-run Checklist Agent                                         │
-│  ├── Re-run Spec Clarify (classify gaps)                            │
-│  └── Update index.md state                                           │
+│  ├── B1: Present gaps via AskUserQuestion                           │
+│  ├── B2: Spec Clarify Agent (apply answers)                         │
+│  ├── B3: Validator Agent (re-validate spec)                         │
+│  ├── B4: Check termination conditions                                │
+│  └── B5: Update index.md state                                       │
 │                                                                      │
 │  PHASE C: Completion                                                 │
 │  ├── Log deferred minor gaps                                         │
@@ -76,12 +75,19 @@ AskUserQuestion(
 
 ## Agents Used
 
-| Agent | File | Purpose |
+| Agent | Type | Purpose |
 |-------|------|---------|
 | Scaffold | `${CLAUDE_PLUGIN_ROOT}/agents/scaffold-agent.md` | Create branch, directories, initialize unified index |
 | Spec Writer | `${CLAUDE_PLUGIN_ROOT}/agents/spec-writer.md` | Write user stories, requirements, criteria |
-| Checklist | `${CLAUDE_PLUGIN_ROOT}/agents/checklist-agent.md` | Analyze context, generate quality checklist, classify gaps |
+| Validator (core) | `humaninloop-core:validator-agent` | Validate spec against check modules |
+| Checklist | `${CLAUDE_PLUGIN_ROOT}/agents/checklist-agent.md` | Generate requirements quality checklist |
 | Spec Clarify | `${CLAUDE_PLUGIN_ROOT}/agents/spec-clarify.md` | Dual-mode: classify gaps OR apply user answers |
+
+### Check Modules
+
+| Module | Purpose |
+|--------|---------|
+| `${CLAUDE_PLUGIN_ROOT}/check-modules/spec-checks.md` | Structural and quality validation for spec.md |
 
 ---
 
@@ -253,32 +259,66 @@ Task(
 
 ---
 
-### A3: Initial Validation (Checklist)
+### A3: Validate Spec Structure
 
-**Spawn Checklist Agent** (combines context analysis and checklist generation):
+**Spawn Validator Agent** with spec-checks module:
+
+```
+Task(
+  subagent_type: "humaninloop-core:validator-agent",
+  description: "Validate spec structure",
+  prompt: JSON.stringify({
+    artifact_paths: ["specs/{feature_id}/spec.md"],
+    check_module: "${CLAUDE_PLUGIN_ROOT}/check-modules/spec-checks.md",
+    context_path: "specs/{feature_id}/.workflow/index.md",
+    index_path: "specs/{feature_id}/.workflow/index.md",
+    constitution_path: ".humaninloop/memory/constitution.md",
+    artifact_type: "spec",
+    phase: "specify",
+    iteration: 1
+  })
+)
+```
+
+**Extract from result**:
+- `result`: pass | partial | fail
+- `validation_report.gaps`: Object with critical, important, minor arrays
+- `auto_resolved[]`: Any gaps automatically fixed
+- `pending_retry[]`: Gaps needing spec-writer retry
+
+**Handle validation result**:
+- If `result == "fail"` with critical gaps: Re-run Spec Writer (A2) with guidance
+- If `result == "partial"` or `pass`: Proceed to A4
+
+**Apply state_updates** to index.md (validation results, gap_priority_queue)
+
+---
+
+### A4: Generate Requirements Checklist
+
+**Spawn Checklist Agent** for requirements quality analysis:
 
 ```
 Task(
   subagent_type: "humaninloop-specs:checklist-agent",
-  description: "Analyze and generate checklist",
+  description: "Generate requirements checklist",
   prompt: [Include feature_id, index_path]
 )
 ```
 
 **Extract from result**:
-- `gaps`: Object with critical, important, minor arrays
-- `gaps.summary`: Counts of each priority
+- `items`: Generated checklist items
 - `signals`: Extracted domain keywords and focus areas
 
 **Apply artifacts and state_updates** (see ADR-005 section above):
 - Write each artifact in `result.artifacts` to disk (checklist file)
-- Apply `result.state_updates` to index.md (document_availability, priority_loop_state, gap_priority_queue, traceability_matrix, etc.)
+- Apply `result.state_updates` to index.md (document_availability, checklist_config, etc.)
 
 ---
 
-### A4: Classify Gaps
+### A5: Classify Gaps
 
-**If gaps.critical.length + gaps.important.length > 0**:
+**If gaps from A3 or A4 have critical + important > 0**:
 
 **Spawn Spec Clarify Agent** in `classify_gaps` mode:
 
@@ -365,19 +405,31 @@ Task(
 
 ### B3: Re-Validate Spec
 
-**Re-run Checklist Agent** to check if gaps are resolved:
+**Spawn Validator Agent** to check if gaps are resolved:
 
 ```
 Task(
-  subagent_type: "humaninloop-specs:checklist-agent",
+  subagent_type: "humaninloop-core:validator-agent",
   description: "Re-validate spec",
-  prompt: [Include feature_id, index_path, iteration]
+  prompt: JSON.stringify({
+    artifact_paths: ["specs/{feature_id}/spec.md"],
+    check_module: "${CLAUDE_PLUGIN_ROOT}/check-modules/spec-checks.md",
+    context_path: "specs/{feature_id}/.workflow/index.md",
+    index_path: "specs/{feature_id}/.workflow/index.md",
+    constitution_path: ".humaninloop/memory/constitution.md",
+    artifact_type: "spec",
+    phase: "specify",
+    iteration: {current_iteration}
+  })
 )
 ```
 
-**Apply artifacts and state_updates** (see ADR-005 section above):
-- Write each artifact in `result.artifacts` to disk (updated checklist with resolved items)
-- Apply `result.state_updates` to index.md
+**Extract from result**:
+- `result`: pass | partial | fail
+- `validation_report.gaps`: Updated gap status
+- `staleness`: Any stale gaps detected
+
+**Apply state_updates** to index.md (validation results, gap status)
 
 **If new gaps found**, run Spec Clarify in classify_gaps mode:
 
