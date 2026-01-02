@@ -59,7 +59,11 @@ skills: context-patterns, brownfield-patterns, research-expertise, domain-modeli
 
 On first use, core creates `.humaninloop/core-installed` to signal availability to dependent plugins.
 
-## Related
+## Architecture
 
-- [ADR-006: humaninloop-core Plugin](../../docs/decisions/006-humaninloop-core-plugin.md)
-- [ADR-005: Hexagonal Multi-Agent Architecture](../../docs/decisions/005-hexagonal-agent-architecture.md)
+This plugin follows **hexagonal (clean) architecture**:
+- **Skills** (innermost): Pure domain knowledge, no procedures
+- **Agents** (middle): Compose skills, execute procedures, return output
+- **Workflows** (outermost): Own state, orchestrate agents
+
+Dependencies point inward only. Agents are stateless functions that return artifacts and state updates.

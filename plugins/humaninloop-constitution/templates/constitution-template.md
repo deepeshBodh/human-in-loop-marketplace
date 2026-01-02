@@ -33,7 +33,6 @@
 <!-- Example: VII. Hexagonal Layer Architecture -->
 <!-- [ARCHITECTURE_PRINCIPLE_DESCRIPTION] -->
 <!-- Example: Skills (innermost) → Agents (middle) → Workflows (outermost); Dependencies point inward only; Agents are stateless, workflows own state -->
-<!-- See docs/decisions/005-hexagonal-agent-architecture.md for reference -->
 
 ## [SECTION_2_NAME]
 <!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->

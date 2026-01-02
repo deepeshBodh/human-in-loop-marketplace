@@ -100,7 +100,7 @@ Execute tasks from the generated task list.
 
 ## Workflow Architecture
 
-This plugin follows the [hexagonal architecture](../../docs/decisions/005-hexagonal-agent-architecture.md):
+This plugin follows **hexagonal (clean) architecture** with three layers where dependencies point inward only:
 - **Skills** (innermost): Pure domain knowledge, no procedures
 - **Agents** (middle): Compose skills, execute procedures, return output
 - **Workflows** (outermost): Own state, orchestrate agents
@@ -122,7 +122,7 @@ This plugin follows the [hexagonal architecture](../../docs/decisions/005-hexago
 
 ### Validation Check Modules (Workflow Configuration)
 
-Check modules are **workflow configuration**, not skills. Per [ADR-005](../../docs/decisions/005-hexagonal-agent-architecture.md), workflows own configuration and pass it to agents. The Validator Agent receives check modules as input and applies them generically.
+Check modules are **workflow configuration**, not skills. Per the hexagonal architecture, workflows own configuration and pass it to agents. The Validator Agent receives check modules as input and applies them generically.
 
 **Plan Workflow Checks:**
 
