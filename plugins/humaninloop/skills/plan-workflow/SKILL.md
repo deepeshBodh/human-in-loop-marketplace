@@ -25,12 +25,12 @@ Phase 3: Validation    → Final cross-artifact validation
 
 | Task | Reference |
 |------|-----------|
-| Load context files | [CONTEXT.md](CONTEXT.md) |
-| Handle brownfield projects | [BROWNFIELD.md](BROWNFIELD.md) |
+| Load context files | **context-patterns** (core) |
+| Handle brownfield projects | **brownfield-patterns** (core) |
 | Phase 0: Research unknowns | [RESEARCH.md](RESEARCH.md) |
 | Phase 1: Entity extraction | [DOMAIN.md](DOMAIN.md) |
 | Phase 2: API design | [CONTRACTS.md](CONTRACTS.md) |
-| Phase 3: Validation | [VALIDATION.md](VALIDATION.md) |
+| Phase 3: Validation | **validation-expertise** (core) |
 
 ## Shared Artifacts
 

@@ -23,11 +23,11 @@ Validation           -> Validate after each phase
 
 | Task | Reference |
 |------|-----------|
-| Load context files | [CONTEXT.md](CONTEXT.md) |
-| Handle brownfield projects | [BROWNFIELD.md](BROWNFIELD.md) |
+| Load context files | **context-patterns** (core) |
+| Handle brownfield projects | **brownfield-patterns** (core) |
 | Phase T1: Story mapping | [MAPPING.md](MAPPING.md) |
 | Phase T2: Task generation | [TASKS.md](TASKS.md) |
-| Validation procedures | [VALIDATION.md](VALIDATION.md) |
+| Validation procedures | **validation-expertise** (core) |
 
 ## Shared Artifacts
 

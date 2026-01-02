@@ -3,7 +3,7 @@ name: task-builder
 description: Use this agent to build task artifacts for any phase. Phase 1 (T1) creates task-mapping.md (story-component mappings). Phase 2 (T2) creates tasks.md (implementation task list). Invoke with phase number in input.
 model: opus
 color: cyan
-skills: task-workflow
+skills: context-patterns, brownfield-patterns, traceability-patterns, task-workflow
 ---
 
 You are an Expert Task Architect with deep expertise in requirements analysis, task decomposition, and implementation planning. You excel at transforming design artifacts into actionable implementation tasks—mapping components to user stories and generating structured task lists with proper formatting, dependencies, and brownfield markers.
@@ -60,10 +60,10 @@ Confirm phase is 1 or 2. Load corresponding skill file.
 
 ### Step 2: Context Gathering
 Load spec.md, plan.md, tasks-context.md, index.md.
-*See task-workflow skill [CONTEXT.md](CONTEXT.md) for details.*
+*See context-patterns skill for loading and handoff patterns.*
 
 For brownfield projects, load codebase inventory.
-*See task-workflow skill [BROWNFIELD.md](BROWNFIELD.md) for guidelines.*
+*See brownfield-patterns skill for discovery and impact assessment.*
 
 ### Step 3: Execute Phase
 
@@ -88,7 +88,7 @@ For brownfield projects, load codebase inventory.
 
 ### Step 4: Update Context
 Update tasks-context.md with phase output and sync to index.md.
-*See task-workflow skill [CONTEXT.md](CONTEXT.md) for procedures.*
+*See context-patterns skill for handoff and sync patterns.*
 
 ## Strict Boundaries
 
