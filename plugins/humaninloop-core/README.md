@@ -25,12 +25,17 @@ It also serves as the **foundation** for other humaninloop plugins (`humaninloop
 | `brownfield-patterns` | Patterns for understanding and working with existing codebases |
 | `validation-expertise` | Quality validation patterns and gap classification |
 | `codebase-understanding` | Techniques for analyzing and comprehending code structure |
+| `prioritization-patterns` | Severity classification, staleness detection, item grouping |
+| `quality-thinking` | Meta-pattern for quality dimensions across any artifact |
+| `traceability-patterns` | Bidirectional linking and orphan detection |
+| `decision-patterns` | Structured decision making with options matrix and rationale |
 
 ### Agents
 
 | Agent | Purpose |
 |-------|---------|
 | `codebase-discovery` | Explore and understand existing codebases systematically |
+| `validator-agent` | Generic validation for any artifact type against check modules |
 
 ## Standalone Usage
 

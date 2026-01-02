@@ -22,8 +22,14 @@ claude-code plugins add humaninloop-specs
 
 ## Prerequisites
 
-This plugin requires a project constitution to be set up first:
+This plugin requires:
 
+1. **humaninloop-core** for foundational capabilities:
+```bash
+claude-code plugins add humaninloop-core
+```
+
+2. **Project constitution** to be set up first:
 ```bash
 claude-code plugins add humaninloop-constitution
 /humaninloop-constitution:setup
@@ -122,6 +128,7 @@ The `spec.md` file at `specs/{feature-id}/spec.md` serves as the contract betwee
 
 ## Related Plugins
 
+- **humaninloop-core** - Foundational skills and agents (required)
 - **humaninloop-constitution** - Project constitution setup (required)
 - **humaninloop** - Plan and tasks workflows (optional, for implementation)
 

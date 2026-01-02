@@ -13,14 +13,10 @@ Comprehensive guidance for processing user answers to clarification questions an
 
 | Task | Reference |
 |------|-----------|
-| Process user answers | [PROCEDURES.md](PROCEDURES.md) - Phase 2 |
 | Handle gap-derived clarifications | [PATTERNS.md](PATTERNS.md) - Gap-Derived Handling |
-| Apply cascading updates | [PROCEDURES.md](PROCEDURES.md) - Phase 3 |
-| Validate quality | [PROCEDURES.md](PROCEDURES.md) - Phase 5 |
-| Update context files | [PROCEDURES.md](PROCEDURES.md) - Phase 6 |
-| Trigger checklist sync | [PROCEDURES.md](PROCEDURES.md) - Phase 7 |
 | Handle round 3 (final) | [PATTERNS.md](PATTERNS.md) - Round 3 Special Handling |
 | See application examples | [PATTERNS.md](PATTERNS.md) - Application Patterns |
+| Full workflow procedures | spec-clarify agent (inline) |
 
 ## Core Workflow Overview
 

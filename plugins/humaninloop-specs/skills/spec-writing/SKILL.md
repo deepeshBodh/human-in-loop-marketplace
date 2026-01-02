@@ -17,9 +17,8 @@ Comprehensive guidance for generating consistent, testable specifications from n
 | Decide when to clarify vs assume | [FRAMEWORKS.md](FRAMEWORKS.md) - Clarification Threshold |
 | Choose MUST/SHOULD/MAY | [FRAMEWORKS.md](FRAMEWORKS.md) - Requirement Strength |
 | Calibrate quality (good vs bad) | [EXAMPLES.md](EXAMPLES.md) |
-| Write spec sections | [PROCEDURES.md](PROCEDURES.md) - Phase 2 |
-| Handle ambiguity | [PROCEDURES.md](PROCEDURES.md) - Phase 3 |
-| Update workflow artifacts | [PROCEDURES.md](PROCEDURES.md) - Phase 4 |
+| Write spec sections | [TEMPLATES.md](TEMPLATES.md) - Section Templates |
+| Handle ambiguity | [TEMPLATES.md](TEMPLATES.md) - Clarification Handling |
 
 ## Core Principles
 
@@ -41,7 +40,7 @@ Comprehensive guidance for generating consistent, testable specifications from n
 
 ## When to Load Additional Files
 
-- **Writing a new spec?** Load [PROCEDURES.md](PROCEDURES.md) for templates
+- **Writing a new spec?** Load [TEMPLATES.md](TEMPLATES.md) for section templates
 - **Prioritizing stories?** Load [FRAMEWORKS.md](FRAMEWORKS.md) for P1/P2/P3 signals
 - **Unsure about quality?** Load [EXAMPLES.md](EXAMPLES.md) for calibration
 - **Validating existing spec?** Load [EXAMPLES.md](EXAMPLES.md) to compare

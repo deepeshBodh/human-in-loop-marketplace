@@ -24,13 +24,18 @@ claude-code plugins add humaninloop
 
 This plugin requires:
 
-1. **Project constitution** to be set up first:
+1. **humaninloop-core** for foundational capabilities:
+```bash
+claude-code plugins add humaninloop-core
+```
+
+2. **Project constitution** to be set up first:
 ```bash
 claude-code plugins add humaninloop-constitution
 /humaninloop-constitution:setup
 ```
 
-2. **Feature specification** created using `humaninloop-specs`:
+3. **Feature specification** created using `humaninloop-specs`:
 ```bash
 claude-code plugins add humaninloop-specs
 /humaninloop-specs:specify <description>
@@ -97,18 +102,18 @@ Execute tasks from the generated task list.
 
 ### Plan Workflow Agents
 
-| Agent | Purpose |
-|-------|---------|
-| **Codebase Discovery Agent** | Analyzes existing code for brownfield considerations |
-| **Plan Builder Agent** | Builds plan artifacts for any phase (research, domain model, contracts) |
-| **Plan Validator Agent** | Validates artifacts against check modules |
+| Agent | Purpose | Source |
+|-------|---------|--------|
+| **Codebase Discovery** | Analyzes existing code for brownfield considerations | core |
+| **Plan Builder** | Builds plan artifacts for any phase (research, domain model, contracts) | local |
+| **Validator Agent** | Validates artifacts against check modules | core |
 
 ### Tasks Workflow Agents
 
-| Agent | Purpose |
-|-------|---------|
-| **Task Builder Agent** | Phase-aware agent: T1 maps to stories, T2 generates `tasks.md` with format, phases, and brownfield markers |
-| **Task Validator Agent** | Validates artifacts against phase-specific check modules |
+| Agent | Purpose | Source |
+|-------|---------|--------|
+| **Task Builder** | Phase-aware: T1 maps to stories, T2 generates `tasks.md` | local |
+| **Validator Agent** | Validates artifacts against phase-specific check modules | core |
 
 ### Validation Check Modules
 
@@ -186,6 +191,7 @@ The plugin uses:
 
 ## Related Plugins
 
+- **humaninloop-core** - Foundational skills and agents (required)
 - **humaninloop-specs** - Specification workflow (required for spec.md)
 - **humaninloop-constitution** - Project constitution setup (required)
 

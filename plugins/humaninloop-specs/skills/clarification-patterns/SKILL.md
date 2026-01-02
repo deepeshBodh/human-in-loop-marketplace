@@ -18,7 +18,7 @@ Comprehensive guidance for handling the clarification lifecycle: from identifyin
 | Apply user answers to spec | [APPLICATION.md](APPLICATION.md) - Basic Replacement |
 | Handle gap-derived clarifications | [APPLICATION.md](APPLICATION.md) - Gap-Derived Handling |
 | Handle round 3 (final) | [APPLICATION.md](APPLICATION.md) - Round 3 Special Handling |
-| Full workflow procedures | [PROCEDURES.md](PROCEDURES.md) |
+| Workflow patterns | [WORKFLOW-PATTERNS.md](WORKFLOW-PATTERNS.md) |
 
 ## Core Concepts
 
