@@ -60,12 +60,12 @@ AskUserQuestion(
 │                                                                      │
 │  PHASE T1: Planning Loop (max 3 iterations)                          │
 │  ├── Spawn task-builder agent (phase=1) → task-mapping.md            │
-│  ├── Spawn task-validator (mapping-checks)                           │
+│  ├── Spawn validator-agent (mapping-checks)                          │
 │  └── Loop if gaps, escalate if stale                                 │
 │                                                                      │
 │  PHASE T2: Generation Loop (max 3 iterations)                        │
 │  ├── Spawn task-builder agent (phase=2) → tasks.md                   │
-│  ├── Spawn task-validator (task-checks)                              │
+│  ├── Spawn validator-agent (task-checks)                             │
 │  └── Loop if gaps, escalate if stale                                 │
 │                                                                      │
 │  PHASE T3: Completion                                                │
@@ -281,7 +281,7 @@ FUNCTION check_termination():
 1. **Spawn Task-Builder Agent (Phase 1)**:
    ```
    Task(
-     subagent_type: "task-builder",
+     subagent_type: "humaninloop:task-builder",
      description: "Map to stories",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
@@ -382,7 +382,7 @@ FUNCTION check_termination():
 1. **Spawn Task-Builder Agent (Phase 2)**:
    ```
    Task(
-     subagent_type: "task-builder",
+     subagent_type: "humaninloop:task-builder",
      description: "Generate tasks",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",

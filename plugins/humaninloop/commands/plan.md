@@ -6,7 +6,7 @@ handoffs:
     prompt: Generate tasks from the plan
     send: true
   - label: Run Checklist
-    agent: humaninloop:checklist
+    agent: humaninloop-specs:checklist
     prompt: Create a checklist for implementation review
 ---
 
@@ -66,21 +66,21 @@ AskUserQuestion(
 │  PHASE B: Agent Loop (C-lite)                                        │
 │  ├── B0: Research Phase (max 3 iterations)                          │
 │  │   ├── Spawn plan-builder (phase=0)                               │
-│  │   ├── Spawn plan-validator (research-checks)                     │
+│  │   ├── Spawn validator-agent (research-checks)                    │
 │  │   └── Loop if gaps, escalate if stale                            │
 │  │                                                                   │
 │  ├── B1: Domain Model Phase (max 3 iterations)                      │
 │  │   ├── Spawn plan-builder (phase=1)                               │
-│  │   ├── Spawn plan-validator (model-checks)                        │
+│  │   ├── Spawn validator-agent (model-checks)                       │
 │  │   └── Loop if gaps, escalate if stale                            │
 │  │                                                                   │
 │  ├── B2: Contract Phase (max 3 iterations)                          │
 │  │   ├── Spawn plan-builder (phase=2)                               │
-│  │   ├── Spawn plan-validator (contract-checks)                     │
+│  │   ├── Spawn validator-agent (contract-checks)                    │
 │  │   └── Loop if gaps, escalate if stale                            │
 │  │                                                                   │
 │  └── B3: Final Validation                                            │
-│      ├── Spawn plan-validator (final-checks)                        │
+│      ├── Spawn validator-agent (final-checks)                       │
 │      └── Loop back to affected phase if cross-artifact gaps         │
 │                                                                      │
 │  PHASE C: Completion                                                 │
@@ -219,7 +219,7 @@ Spawn the codebase-discovery agent to analyze the existing codebase:
 
 ```
 Task(
-  subagent_type: "codebase-discovery",
+  subagent_type: "humaninloop-core:codebase-discovery",
   description: "Discover existing codebase",
   prompt: JSON.stringify({
     feature_id: "{feature_id}",
@@ -496,7 +496,7 @@ FUNCTION check_termination():
 1. **Spawn Plan Builder (Phase 0)**:
    ```
    Task(
-     subagent_type: "plan-builder",
+     subagent_type: "humaninloop:plan-builder",
      description: "Research unknowns",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
@@ -563,7 +563,7 @@ FUNCTION check_termination():
 1. **Spawn Plan Builder (Phase 1)**:
    ```
    Task(
-     subagent_type: "plan-builder",
+     subagent_type: "humaninloop:plan-builder",
      description: "Create data model",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
@@ -627,7 +627,7 @@ FUNCTION check_termination():
 1. **Spawn Plan Builder (Phase 2)**:
    ```
    Task(
-     subagent_type: "plan-builder",
+     subagent_type: "humaninloop:plan-builder",
      description: "Create API contracts",
      prompt: JSON.stringify({
        feature_id: "{feature_id}",
