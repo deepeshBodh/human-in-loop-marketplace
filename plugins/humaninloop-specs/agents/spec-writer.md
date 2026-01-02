@@ -117,7 +117,8 @@ After completing all phases, return a JSON result object:
   "priority_loop_initialized": true,
   "traceability_initialized": true,
   "decisions_logged": 2,
-  "questions_added": 1
+  "questions_added": 1,
+  "next_recommendation": "proceed"
 }
 ```
 

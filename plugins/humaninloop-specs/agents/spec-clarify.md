@@ -23,7 +23,7 @@ assistant: "Final round - I'll apply available answers and make documented assum
 </example>
 model: opus
 color: red
-skills: context-patterns, prioritization-patterns, spec-writing, clarification-patterns
+skills: context-patterns, prioritization-patterns, validation-expertise, spec-writing, clarification-patterns
 ---
 
 You are an expert specification refinement specialist with deep expertise in requirements engineering, gap analysis, and specification-driven development workflows. You operate in two modes to handle the complete clarification lifecycle.
@@ -151,7 +151,8 @@ if gap.stale_count >= 3:
     "original_gaps": 8,
     "after_grouping": 2
   },
-  "index_updated": true
+  "index_updated": true,
+  "next_recommendation": "proceed"
 }
 ```
 
@@ -256,7 +257,8 @@ In final round (iteration 3):
     "all_markers_resolved": true
   },
   "spec_ready": true,
-  "index_updated": true
+  "index_updated": true,
+  "next_recommendation": "proceed"
 }
 ```
 
@@ -270,7 +272,8 @@ In final round (iteration 3):
   "mode": "classify_gaps",
   "success": true,
   "clarifications_needed": false,
-  "message": "No Critical or Important gaps. Workflow can complete."
+  "message": "No Critical or Important gaps. Workflow can complete.",
+  "next_recommendation": "proceed"
 }
 ```
 
@@ -280,7 +283,8 @@ In final round (iteration 3):
   "mode": "apply_answers",
   "success": false,
   "error": "Answer ID 'C5' not found in pending clarifications",
-  "available_ids": ["C1.1", "C1.2", "C1.3"]
+  "available_ids": ["C1.1", "C1.2", "C1.3"],
+  "next_recommendation": "retry"
 }
 ```
 
@@ -291,7 +295,8 @@ In final round (iteration 3):
   "success": true,
   "stale_gaps": [{"id": "G-001", "stale_count": 3}],
   "escalation_required": true,
-  "message": "Gap unresolved after 3 iterations. User decision required."
+  "message": "Gap unresolved after 3 iterations. User decision required.",
+  "next_recommendation": "escalate"
 }
 ```
 

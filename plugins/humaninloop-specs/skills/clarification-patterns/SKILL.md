@@ -59,6 +59,6 @@ This skill supports the spec-clarify agent in dual-mode operation:
    - Updates Gap Priority Queue with `resolved` status
    - Validates spec quality
 
-## Related Skills
+## Skill Composition Note
 
-- **spec-writing**: Reference for quality validation criteria and requirement formats
+> **Architecture**: Skills are atomic—they do not depend on other skills directly. When an agent needs knowledge from multiple skills, it declares them in its `skills:` field (e.g., `skills: clarification-patterns, spec-writing`). The agent then has access to all declared skills during execution.

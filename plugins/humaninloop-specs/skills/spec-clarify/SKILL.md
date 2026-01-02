@@ -47,7 +47,6 @@ Phase 7: Trigger Checklist Sync (handoff to checklist-agent update mode)
 | **Gap-Derived** | Clarifications from Priority Loop, reference CHK and FR sources |
 | **Round 3 Finality** | Final round—make assumptions, never add new markers |
 
-## Related Skills
+## Skill Composition Note
 
-- **spec-writing**: Reference for quality validation criteria and requirement formats
-- **clarification-patterns**: Gap classification, grouping, and answer application patterns
+> **Architecture**: Skills are atomic—they do not depend on other skills directly. When an agent needs knowledge from multiple skills (e.g., `spec-writing`, `clarification-patterns`), it declares them in its `skills:` field. The agent then has access to all declared skills during execution.

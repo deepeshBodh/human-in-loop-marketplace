@@ -52,6 +52,33 @@ AskUserQuestion(
 - If user selects "Re-enter input" → wait for user to type their input in the terminal, then use that as the effective `$ARGUMENTS`
 - If user selects "Continue without input" → proceed with empty input (existing behavior)
 
+---
+
+## Pre-Execution: Core Dependency Check
+
+Before generating a checklist, verify that humaninloop-core is installed:
+
+1. **Check for core marker file** at `.humaninloop/core-installed`
+2. **If NOT found**, display the following and STOP execution:
+
+```
+humaninloop-core Required
+
+The HumanInLoop checklist command requires humaninloop-core to be installed first.
+
+humaninloop-core provides the foundational skills that this plugin depends on:
+- quality-thinking, prioritization-patterns, validation-expertise
+
+To install humaninloop-core, run:
+/plugin install humaninloop-core
+
+Then retry /humaninloop-specs:checklist
+```
+
+3. **If found**: Continue to Execution Steps
+
+---
+
 ## Execution Steps
 
 ### Step 1: Setup and Context

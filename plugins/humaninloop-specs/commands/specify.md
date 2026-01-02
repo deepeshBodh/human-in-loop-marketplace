@@ -85,6 +85,32 @@ AskUserQuestion(
 
 ---
 
+## Pre-Execution: Core Dependency Check
+
+Before any workflow execution, verify that humaninloop-core is installed:
+
+1. **Check for core marker file** at `.humaninloop/core-installed`
+2. **If NOT found**, display the following and STOP execution:
+
+```
+humaninloop-core Required
+
+The HumanInLoop specs workflow requires humaninloop-core to be installed first.
+
+humaninloop-core provides the foundational skills that this plugin depends on:
+- context-patterns, quality-thinking, prioritization-patterns
+- validation-expertise, traceability-patterns
+
+To install humaninloop-core, run:
+/plugin install humaninloop-core
+
+Then retry /humaninloop-specs:specify
+```
+
+3. **If found**: Continue to Constitution Check
+
+---
+
 ## Pre-Execution: Constitution Check
 
 Before any workflow execution, verify that the project constitution exists:

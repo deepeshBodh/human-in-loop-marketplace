@@ -34,6 +34,109 @@ You must NOT:
 - Interact directly with users (the Supervisor handles communication)
 - Make decisions about feature requirements or implementation
 
+## Operating Procedure
+
+Execute these steps in order when scaffolding a new feature:
+
+### Step 1: Run the Scaffold Script
+
+```bash
+${SKILL_ROOT}/scripts/create-new-feature.sh \
+  --json \
+  "{{FEATURE_DESCRIPTION}}"
+```
+
+Or with explicit values:
+```bash
+${SKILL_ROOT}/scripts/create-new-feature.sh \
+  --json \
+  --number {{NEXT_NUMBER}} \
+  --short-name "{{SHORT_NAME}}" \
+  "{{FEATURE_DESCRIPTION}}"
+```
+
+### Step 2: Parse JSON Output
+
+Extract from the script output:
+- `BRANCH_NAME`: Full branch name (e.g., "005-user-auth")
+- `SPEC_FILE`: Path to the spec file
+- `FEATURE_NUM`: Zero-padded feature number
+
+### Step 3: Create Workflow Directory
+
+```bash
+mkdir -p specs/{{BRANCH_NAME}}/.workflow
+mkdir -p specs/{{BRANCH_NAME}}/checklists
+```
+
+### Step 4: Initialize Unified Workflow Context
+
+The unified index architecture uses a single comprehensive state file for all workflows.
+
+**Create index.md** (unified cross-workflow state):
+- Copy from `${CLAUDE_PLUGIN_ROOT}/templates/index-template.md`
+- Destination: `specs/{{BRANCH_NAME}}/.workflow/index.md`
+- Fill placeholders:
+  - `{{feature_id}}` -> BRANCH_NAME
+  - `{{branch_name}}` -> BRANCH_NAME
+  - `{{created_timestamp}}` -> Current ISO 8601 timestamp
+  - `{{updated_timestamp}}` -> Current ISO 8601 timestamp
+  - `{{original_description}}` -> Original feature description verbatim
+  - Set all document statuses to `absent` initially
+  - Set `specify_status` to `in_progress`, all others to `not_started`
+  - Set `loop_status` to `not_started`
+  - Set `current_agent` to `scaffold`
+
+### Step 5: Add Decision Log Entry
+
+Add initial entry to index.md Unified Decisions Log:
+
+```markdown
+| {{timestamp}} | specify | scaffold | Created feature branch and directory | Auto-generated from description |
+```
+
+### Step 6: Update Handoff Notes
+
+In index.md Agent Handoff Notes section:
+
+```markdown
+### From Scaffold Agent
+- Branch created: {{BRANCH_NAME}}
+- Spec template copied to: {{SPEC_FILE}}
+- Index initialized: specs/{{BRANCH_NAME}}/.workflow/index.md
+- Ready for Spec Writer Agent
+```
+
+## Quality Verification
+
+Before returning success, verify all of the following:
+
+- [ ] Git branch exists locally (if git repository)
+- [ ] Feature directory created at `specs/{{BRANCH_NAME}}/`
+- [ ] Spec template file exists at `specs/{{BRANCH_NAME}}/spec.md`
+- [ ] Checklists directory exists at `specs/{{BRANCH_NAME}}/checklists/`
+- [ ] index.md created and populated at `specs/{{BRANCH_NAME}}/.workflow/index.md`
+- [ ] All template placeholders have been replaced
+- [ ] All paths in output JSON are valid and accessible
+
+## Error Handling
+
+| Error Type | Detection | Response |
+|------------|-----------|----------|
+| Script not found | Check if script exists before execution | Report missing dependency with path |
+| Git error | Check git command exit status | Report specific git error message |
+| Permission error | Check file operation results | Report path with permission issue |
+| Partial failure | Track each step completion | Document partial state, attempt cleanup, report accurately |
+| Duplicate branch | Check if branch already exists | Increment feature number and retry |
+| Template not found | Check if template file exists | Create empty file as fallback, warn in output |
+
+### Partial Failure Recovery
+
+If scaffolding partially completes:
+1. Document what succeeded and what failed
+2. Attempt cleanup of partial work if safe (e.g., remove incomplete directories)
+3. Report the partial state in the error response
+
 ## Output Contract
 
 ### On Success
@@ -54,7 +157,8 @@ Return a JSON object with all paths and status indicators:
   },
   "git_branch_created": true,
   "template_copied": true,
-  "index_initialized": true
+  "index_initialized": true,
+  "next_recommendation": "proceed"
 }
 ```
 
@@ -72,7 +176,8 @@ Return error details with cleanup status:
     "template_copied": false,
     "context_initialized": false
   },
-  "cleanup_performed": true
+  "cleanup_performed": true,
+  "next_recommendation": "retry"
 }
 ```
 

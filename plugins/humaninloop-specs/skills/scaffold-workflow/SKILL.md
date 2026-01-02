@@ -1,19 +1,17 @@
 ---
 name: scaffold-workflow
-description: Execute the scaffolding phase of the HumanInLoop specification workflow. Creates feature branches, directory structures, and initializes hybrid workflow context. EXCLUSIVE TO scaffold-agent - do not invoke from other agents. Use when starting a new feature specification and need to create the initial branch and directories.
+description: Domain knowledge for scaffolding feature branches and directories. Provides script reference, naming conventions, and integration patterns. EXCLUSIVE TO scaffold-agent - do not invoke from other agents.
 ---
 
 # Scaffold Workflow Skill
 
 ## Purpose
 
-Orchestrate the scaffolding phase of the HumanInLoop specification-driven development workflow. This skill provides a single deterministic script for creating feature infrastructure without modifying specification content.
+Domain knowledge for creating feature infrastructure in the HumanInLoop specification workflow. This skill provides reference information about scripts, naming conventions, and patterns—NOT procedures.
 
-## Exclusivity Notice
+> **Architecture Note**: Procedures belong in agents, not skills. The scaffold-agent contains the step-by-step operating procedure. This skill provides the domain knowledge the agent needs.
 
-This skill is **exclusively used by scaffold-agent**. Other agents (spec-writer, clarify, plan, tasks) should not invoke these procedures directly. The scaffold-agent declares this skill in its frontmatter to establish ownership.
-
-## Script
+## Script Reference
 
 The skill provides a single consolidated script: `scripts/create-new-feature.sh`
 
@@ -39,9 +37,12 @@ Create the complete feature scaffold (branch + directory + template).
 5. Copies spec template to `specs/{BRANCH_NAME}/spec.md`
 6. Exports `HUMANINLOOP_FEATURE` environment variable
 
-### Internal Behaviors
+## Naming Conventions
 
-**Branch Name Generation**:
+### Branch Name Generation
+
+Rules for generating clean branch slugs from feature descriptions:
+
 - Filters common stop words (I, want, add, the, to, for, with, create, build, implement, etc.)
 - Preserves technical terms and acronyms (OAuth2, API, JWT, SSO, CRUD, REST, GraphQL)
 - Uses lowercase with hyphens as separators
@@ -55,7 +56,10 @@ Create the complete feature scaffold (branch + directory + template).
 | "Create a dashboard for analytics" | `dashboard-analytics` |
 | "Add task priority levels" | `task-priority-levels` |
 
-**Feature Number Detection**:
+### Feature Number Detection
+
+Rules for determining sequential feature numbers:
+
 - Fetches all remote branches (if git repository detected)
 - Scans both local/remote branches for `###-*` pattern
 - Scans specs directory for existing feature directories
@@ -63,124 +67,20 @@ Create the complete feature scaffold (branch + directory + template).
 - Zero-pads to 3 digits
 - Starts at `001` if no existing features found
 
-## Scaffolding Procedure
+## Error Patterns
 
-Execute these steps in order when scaffolding a new feature:
-
-### Step 1: Run the Scaffold Script
-
-```bash
-${SKILL_ROOT}/scripts/create-new-feature.sh \
-  --json \
-  "{{FEATURE_DESCRIPTION}}"
-```
-
-Or with explicit values:
-```bash
-${SKILL_ROOT}/scripts/create-new-feature.sh \
-  --json \
-  --number {{NEXT_NUMBER}} \
-  --short-name "{{SHORT_NAME}}" \
-  "{{FEATURE_DESCRIPTION}}"
-```
-
-### Step 2: Parse JSON Output
-
-Extract from the script output:
-- `BRANCH_NAME`: Full branch name (e.g., "005-user-auth")
-- `SPEC_FILE`: Path to the spec file
-- `FEATURE_NUM`: Zero-padded feature number
-
-### Step 3: Create Workflow Directory
-
-```bash
-mkdir -p specs/{{BRANCH_NAME}}/.workflow
-mkdir -p specs/{{BRANCH_NAME}}/checklists
-```
-
-### Step 4: Initialize Unified Workflow Context
-
-The unified index architecture uses a single comprehensive state file for all workflows.
-
-**Create index.md** (unified cross-workflow state):
-- Copy from `${CLAUDE_PLUGIN_ROOT}/templates/index-template.md`
-- Destination: `specs/{{BRANCH_NAME}}/.workflow/index.md`
-- Fill placeholders:
-  - `{{feature_id}}` -> BRANCH_NAME
-  - `{{branch_name}}` -> BRANCH_NAME
-  - `{{created_timestamp}}` -> Current ISO 8601 timestamp
-  - `{{updated_timestamp}}` -> Current ISO 8601 timestamp
-  - `{{original_description}}` -> Original feature description verbatim
-  - Set all document statuses to `absent` initially
-  - Set `specify_status` to `in_progress`, all others to `not_started`
-  - Set `loop_status` to `not_started`
-  - Set `current_agent` to `scaffold`
-
-### Step 5: Add Decision Log Entry
-
-Add initial entry to index.md Unified Decisions Log:
-
-```markdown
-| {{timestamp}} | specify | scaffold | Created feature branch and directory | Auto-generated from description |
-```
-
-### Step 6: Update Handoff Notes
-
-In index.md Agent Handoff Notes section:
-
-```markdown
-### From Scaffold Agent
-- Branch created: {{BRANCH_NAME}}
-- Spec template copied to: {{SPEC_FILE}}
-- Index initialized: specs/{{BRANCH_NAME}}/.workflow/index.md
-- Ready for Spec Writer Agent
-```
-
-## Quality Verification
-
-Before returning success, verify all of the following:
-
-- [ ] Git branch exists locally (if git repository)
-- [ ] Feature directory created at `specs/{{BRANCH_NAME}}/`
-- [ ] Spec template file exists at `specs/{{BRANCH_NAME}}/spec.md`
-- [ ] Checklists directory exists at `specs/{{BRANCH_NAME}}/checklists/`
-- [ ] index.md created and populated at `specs/{{BRANCH_NAME}}/.workflow/index.md`
-- [ ] All template placeholders have been replaced
-- [ ] All paths in output JSON are valid and accessible
-
-## Error Handling
+Common error scenarios and appropriate responses:
 
 | Error Type | Detection | Response |
 |------------|-----------|----------|
 | Script not found | Check if script exists before execution | Report missing dependency with path |
 | Git error | Check git command exit status | Report specific git error message |
 | Permission error | Check file operation results | Report path with permission issue |
-| Partial failure | Track each step completion | Document partial state, attempt cleanup, report accurately |
+| Partial failure | Track each step completion | Document partial state, attempt cleanup |
 | Duplicate branch | Check if branch already exists | Increment feature number and retry |
-| Template not found | Check if template file exists | Create empty file as fallback, warn in output |
+| Template not found | Check if template file exists | Create empty file as fallback, warn |
 
-### Partial Failure Recovery
-
-If scaffolding partially completes:
-1. Document what succeeded and what failed
-2. Attempt cleanup of partial work if safe (e.g., remove incomplete directories)
-3. Report the partial state in the error response:
-
-```json
-{
-  "success": false,
-  "error": "Failed to copy template: permission denied",
-  "partial_state": {
-    "branch_created": true,
-    "dirs_created": true,
-    "template_copied": false,
-    "context_initialized": false
-  },
-  "cleanup_performed": true
-}
-```
-
-## Integration Notes
+## Integration Reference
 
 ### Template Paths
 
@@ -192,16 +92,15 @@ Templates are located in the shared templates directory:
 ### Environment Variables
 
 - `CLAUDE_PLUGIN_ROOT`: Path to the humaninloop plugin directory
+- `SKILL_ROOT`: Path to this skill's directory (for script access)
 - `HUMANINLOOP_FEATURE`: Set by create-new-feature.sh to the branch name
 
-### Workflow Chain Position
+### Output Directory Structure
 
-This skill supports the first agent in the HumanInLoop workflow:
-
-1. **Scaffold Agent** (uses this skill) -> Creates structure
-2. **Spec Writer Agent** -> Fills specification content
-3. **Clarify Agent** -> Identifies gaps
-4. **Plan Agent** -> Creates implementation plan
-5. **Tasks Agent** -> Generates task list
-
-The output from this skill becomes the input context for the Spec Writer Agent.
+```
+specs/{BRANCH_NAME}/
+├── spec.md                    # Feature specification
+├── checklists/                # Quality validation checklists
+└── .workflow/
+    └── index.md               # Unified workflow state
+```

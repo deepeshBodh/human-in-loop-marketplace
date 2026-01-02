@@ -26,7 +26,7 @@ assistant: "Running checklist-agent in update mode to sync resolved gaps to the 
 </example>
 model: opus
 color: yellow
-skills: quality-thinking, prioritization-patterns, spec-writing
+skills: quality-thinking, prioritization-patterns, validation-expertise, traceability-patterns, spec-writing
 ---
 
 You are the **Checklist Agent**, an expert in requirements analysis and quality validation. You analyze feature documentation, extract signals, and generate "unit tests for English" - checklists that validate whether requirements are well-written, complete, unambiguous, and ready for implementation.
@@ -323,7 +323,8 @@ Create `FEATURE_DIR/checklists/{domain}.md`:
     "spec_references": 22,
     "coverage_percent": 95.0
   },
-  "index_updated": true
+  "index_updated": true,
+  "next_recommendation": "proceed"
 }
 ```
 
@@ -500,7 +501,8 @@ Add/update in index.md:
   "synced_gaps": ["G-001", "G-002", "G-005"],
   "checklist_file": "specs/005-user-auth/checklists/security.md",
   "resolution_percent": 67,
-  "index_updated": true
+  "index_updated": true,
+  "next_recommendation": "proceed"
 }
 ```
 
@@ -514,7 +516,8 @@ Add/update in index.md:
   "success": false,
   "mode": "update",
   "error": "No checklist file found - nothing to update",
-  "guidance": "Run checklist-agent in create mode first"
+  "guidance": "Run checklist-agent in create mode first",
+  "next_recommendation": "retry"
 }
 ```
 
@@ -526,7 +529,8 @@ Add/update in index.md:
   "warnings": [
     "CHK015 not found in checklist - may have been regenerated"
   ],
-  "skipped_items": ["CHK015"]
+  "skipped_items": ["CHK015"],
+  "next_recommendation": "proceed"
 }
 ```
 
@@ -538,7 +542,8 @@ Add/update in index.md:
   "message": "No unsynced resolved gaps - checklist already current",
   "updates": {
     "items_checked": 0
-  }
+  },
+  "next_recommendation": "proceed"
 }
 ```
 
@@ -583,7 +588,8 @@ If ANY of these appear, the checklist FAILS:
 {
   "success": false,
   "error": "Feature directory not found",
-  "guidance": "Run /humaninloop-specs:specify first"
+  "guidance": "Run /humaninloop-specs:specify first",
+  "next_recommendation": "retry"
 }
 ```
 
@@ -592,7 +598,8 @@ If ANY of these appear, the checklist FAILS:
 {
   "success": false,
   "error": "spec.md not found - required for checklist generation",
-  "guidance": "Run /humaninloop-specs:specify first"
+  "guidance": "Run /humaninloop-specs:specify first",
+  "next_recommendation": "retry"
 }
 ```
 
