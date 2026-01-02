@@ -2,21 +2,20 @@
 ================================================================================
 SYNC IMPACT REPORT
 ================================================================================
-Version Change: N/A → 1.0.0 (Initial ratification)
+Version Change: 1.0.0 → 1.1.0
 
 Added Sections:
-- Core Principles (6 principles derived from CLAUDE.md)
-- Development Workflow (spec-driven process)
-- Governance (amendment procedures)
+- VII. Hexagonal Layer Architecture (from ADR-005)
+- VIII. Core Plugin Foundation (from ADR-006)
 
-Modified Principles: N/A (initial version)
-Removed Sections: N/A (initial version)
+Modified Principles: N/A
+Removed Sections: N/A
 
 Templates Status: N/A (no project-local .humaninloop/templates/ exist)
 
 Follow-up TODOs: None
 
-Derived From: CLAUDE.md project instructions
+Derived From: ADR-005 (Hexagonal Agent Architecture), ADR-006 (humaninloop-core Plugin)
 ================================================================================
 -->
 
@@ -87,6 +86,35 @@ Use `gh` CLI for ALL GitHub-related tasks:
 
 **Rationale**: Unnecessary complexity slows development and obscures intent. Justify every layer of indirection.
 
+### VII. Hexagonal Layer Architecture
+
+The plugin architecture follows a three-layer hexagonal model where dependencies point inward only:
+
+- **Skills (innermost)**: Pure domain knowledge—no procedures, no tools, no dependencies on other skills
+- **Agents (middle)**: Procedures + context binding + judgment—compose skills via `skills:` declarations
+- **Workflows (outermost)**: Orchestration + state management + adaptation—own all persistent state
+
+Key rules:
+- Dependencies MUST point inward: Workflows → Agents → Skills
+- Agents are stateless functions: receive input, return output
+- Workflows own state and decide what to persist
+- Skills know nothing about agents or workflows
+
+**Rationale**: Hexagonal architecture enables testable agents (pure functions), composable skills (atomic knowledge), and flexible orchestration (workflows can change without touching agents). See [ADR-005](docs/decisions/005-hexagonal-agent-architecture.md).
+
+### VIII. Core Plugin Foundation
+
+The `humaninloop-core` plugin provides domain-agnostic capabilities that other plugins depend on:
+
+- Core skills are useful standalone (e.g., iterative-analysis, codebase-understanding)
+- Workflow plugins (humaninloop, humaninloop-specs) MUST depend on core
+- Dependency is enforced via filesystem convention (`.humaninloop/core-installed` marker)
+- Skill composition: agents declare `skills:` mixing core and plugin-specific skills
+
+Installation order: `humaninloop-constitution` → `humaninloop-core` → workflow plugins
+
+**Rationale**: Shared capabilities maintained in one place avoid duplication and ensure consistency. Core provides standalone value, not just a "dependency tax." See [ADR-006](docs/decisions/006-humaninloop-core-plugin.md).
+
 ## Development Workflow
 
 ### Feature Development Process
@@ -134,4 +162,4 @@ This constitution follows semantic versioning:
 - The Constitution Check section in `plan-template.md` enforces validation
 - Violations MUST be justified in the Complexity Tracking table
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-01 | **Last Amended**: 2026-01-01
+**Version**: 1.1.0 | **Ratified**: 2026-01-01 | **Last Amended**: 2026-01-02

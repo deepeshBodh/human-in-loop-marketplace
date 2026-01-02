@@ -14,17 +14,24 @@ The marketplace is in active development. The core specify → plan → tasks wo
 
 ### Available Now
 
+**Plugins** (install in order):
+1. `humaninloop-constitution` - Project constitution setup **(stable 1.0.0)**
+2. `humaninloop-core` - Shared skills and agents (foundation)
+3. `humaninloop-specs` - Specification workflow
+4. `humaninloop` - Implementation workflow
+
 **Commands:**
-- `/humaninloop:specify` - Create structured specifications
+- `/humaninloop-constitution:setup` - Initialize project constitution
+- `/humaninloop-specs:specify` - Create structured specifications
+- `/humaninloop-specs:checklist` - Generate requirements checklists
 - `/humaninloop:plan` - Generate implementation plans
 - `/humaninloop:tasks` - Generate implementation tasks
-- `/humaninloop:analyze` - Analyze codebase context
-- `/humaninloop:checklist` - Generate implementation checklists
+- `/humaninloop:analyze` - Cross-artifact consistency validation
 - `/humaninloop:implement` - Execute implementation with tracking
-- `/humaninloop-constitution:setup` - Initialize project constitution **(stable 1.0.0)**
 
 **Skills** (auto-invoked by Claude):
 - `iterative-analysis` - Progressive brainstorming with recommendations and synthesis
+- Plus many more in `humaninloop-core` (context-patterns, brownfield-patterns, etc.)
 
 ---
 

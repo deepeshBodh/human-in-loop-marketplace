@@ -100,22 +100,29 @@ Execute tasks from the generated task list.
 
 ## Workflow Architecture
 
+This plugin follows the [hexagonal architecture](../../docs/decisions/005-hexagonal-agent-architecture.md):
+- **Skills** (innermost): Pure domain knowledge, no procedures
+- **Agents** (middle): Compose skills, execute procedures, return output
+- **Workflows** (outermost): Own state, orchestrate agents
+
 ### Plan Workflow Agents
 
-| Agent | Purpose | Source |
-|-------|---------|--------|
-| **Codebase Discovery** | Analyzes existing code for brownfield considerations | core |
-| **Plan Builder** | Builds plan artifacts for any phase (research, domain model, contracts) | local |
-| **Validator Agent** | Validates artifacts against check modules | core |
+| Agent | Purpose | Skills | Source |
+|-------|---------|--------|--------|
+| **Codebase Discovery** | Analyzes existing code for brownfield considerations | codebase-understanding, brownfield-patterns | core |
+| **Plan Builder** | Builds plan artifacts for any phase | context-patterns, brownfield-patterns, decision-patterns, plan-workflow | local |
+| **Validator Agent** | Validates artifacts against check modules | validation-expertise, prioritization-patterns, quality-thinking | core |
 
 ### Tasks Workflow Agents
 
-| Agent | Purpose | Source |
-|-------|---------|--------|
-| **Task Builder** | Phase-aware: T1 maps to stories, T2 generates `tasks.md` | local |
-| **Validator Agent** | Validates artifacts against phase-specific check modules | core |
+| Agent | Purpose | Skills | Source |
+|-------|---------|--------|--------|
+| **Task Builder** | Phase-aware: T1 maps to stories, T2 generates `tasks.md` | context-patterns, traceability-patterns, task-workflow | local |
+| **Validator Agent** | Validates artifacts against phase-specific check modules | validation-expertise, prioritization-patterns, quality-thinking | core |
 
-### Validation Check Modules
+### Validation Check Modules (Workflow Configuration)
+
+Check modules are **workflow configuration**, not skills. Per [ADR-005](../../docs/decisions/005-hexagonal-agent-architecture.md), workflows own configuration and pass it to agents. The Validator Agent receives check modules as input and applies them generically.
 
 **Plan Workflow Checks:**
 

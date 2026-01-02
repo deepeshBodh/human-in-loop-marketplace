@@ -141,9 +141,22 @@ Use the plugin name as scope when applicable:
 - `fix(constitution): correct agent reference`
 - `docs: update README`
 
+## Architecture Guidelines
+
+The plugin ecosystem follows a [hexagonal architecture](./docs/decisions/005-hexagonal-agent-architecture.md):
+
+- **Skills** (innermost): Pure domain knowledge—no procedures, no tools
+- **Agents** (middle): Compose skills, execute procedures, return output
+- **Workflows** (outermost): Own state, orchestrate agents
+
+When contributing:
+- Keep skills declarative (what is good) not procedural (how to do it)
+- Agents declare skills via `skills:` in YAML frontmatter
+- Check-modules are workflow configuration, not skills
+
 ## Contributing to Core Plugins
 
-For contributions to the `humaninloop` or `humaninloop-constitution` plugins:
+For contributions to `humaninloop-core`, `humaninloop-specs`, or `humaninloop` plugins:
 
 ### Feature Contributions
 

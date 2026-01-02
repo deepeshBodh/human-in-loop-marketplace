@@ -70,16 +70,21 @@ Generate a custom quality checklist for the current feature.
 
 ## Workflow Architecture
 
+This plugin follows the [hexagonal architecture](../../docs/decisions/005-hexagonal-agent-architecture.md):
+- **Skills** (innermost): Pure domain knowledge, no procedures
+- **Agents** (middle): Compose skills, execute procedures, return output
+- **Workflows** (outermost): Own state, orchestrate agents
+
 ### Agents
 
-| Agent | Purpose |
-|-------|---------|
-| **Scaffold Agent** | Creates branch, directories, and initializes templates |
-| **Spec Writer Agent** | Generates user stories, requirements, success criteria |
-| **Checklist Context Analyzer** | Extracts signals for quality validation |
-| **Checklist Writer Agent** | Generates validation checklists, classifies gaps |
-| **Gap Classifier Agent** | Groups and prioritizes specification gaps |
-| **Spec Clarify Agent** | Applies user answers to resolve gaps |
+| Agent | Purpose | Skills | Source |
+|-------|---------|--------|--------|
+| **Scaffold Agent** | Creates branch, directories, and initializes templates | scaffold-workflow | local |
+| **Spec Writer Agent** | Generates user stories, requirements, success criteria | spec-writing, context-patterns, quality-thinking | local |
+| **Checklist Context Analyzer** | Extracts signals for quality validation | context-patterns, quality-thinking | local |
+| **Checklist Writer Agent** | Generates validation checklists, classifies gaps | quality-thinking, validation-expertise, clarification-patterns | local |
+| **Gap Classifier Agent** | Groups and prioritizes specification gaps | prioritization-patterns, clarification-patterns | local |
+| **Spec Clarify Agent** | Applies user answers to resolve gaps | clarification-patterns, spec-clarify, context-patterns | local |
 
 ### Priority Loop
 

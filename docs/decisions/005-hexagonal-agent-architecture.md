@@ -1,6 +1,6 @@
 # ADR-005: Hexagonal Multi-Agent Architecture
 
-**Status**: Proposed
+**Status**: Accepted
 **Date**: 2026-01-02
 **Decision**: Adopt hexagonal/clean architecture with Skills (innermost), Agents (middle), Workflows (outermost) layers
 

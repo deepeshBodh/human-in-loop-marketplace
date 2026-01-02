@@ -965,6 +965,85 @@ Skills created for one platform work across all compatible agents:
 
 ---
 
+## 13. Skills in Hexagonal Architecture
+
+**Summary**: In multi-agent plugin systems like HumanInLoop, skills occupy the innermost layer of a hexagonal (clean) architecture. Skills are pure domain knowledge with no procedures, no tool bindings, and no dependencies on other skills. Composition happens at the agent level via `skills:` declarations.
+
+### Technical details
+
+**Layer Hierarchy**:
+```
+┌─────────────────────────────────────────────────────────┐
+│  WORKFLOWS (outermost): Orchestration, State, Adaptation │
+├─────────────────────────────────────────────────────────┤
+│  AGENTS (middle): Procedures, Context Binding, Judgment   │
+├─────────────────────────────────────────────────────────┤
+│  SKILLS (innermost): Pure Domain Knowledge                │
+└─────────────────────────────────────────────────────────┘
+         Dependencies point INWARD only
+```
+
+**Skill Design Principles in Hexagonal Context**:
+
+| Principle | Description |
+|-----------|-------------|
+| **Atomic** | Each skill is self-contained; no skill references other skills |
+| **Pure** | Skills contain knowledge, not procedures or tool bindings |
+| **Composable** | Agents combine skills via `skills:` declarations |
+| **Stateless** | Skills have no side effects; state is owned by workflows |
+
+**Agent-Level Composition**:
+
+Agents declare which skills they use in their YAML frontmatter:
+
+```yaml
+---
+name: plan-builder
+description: Builds implementation plan artifacts
+model: opus
+skills: context-patterns, brownfield-patterns, decision-patterns, plan-workflow
+---
+```
+
+This agent uses 4 skills:
+- `context-patterns` (from humaninloop-core)
+- `brownfield-patterns` (from humaninloop-core)
+- `decision-patterns` (from humaninloop-core)
+- `plan-workflow` (from humaninloop plugin)
+
+Claude's flat skill namespace resolves skills from whichever plugin provides them.
+
+**Core vs. Domain-Specific Skills**:
+
+| Category | Location | Examples |
+|----------|----------|----------|
+| **Core** | humaninloop-core | context-patterns, brownfield-patterns, validation-expertise, iterative-analysis |
+| **Domain-Specific** | humaninloop-specs | spec-writing, clarification-patterns, scaffold-workflow |
+| **Domain-Specific** | humaninloop | plan-workflow, task-workflow |
+
+**Why This Architecture?**
+
+1. **Testability**: Skills are pure knowledge—no side effects to mock
+2. **Composability**: Mix core + domain skills in any agent
+3. **Maintainability**: Update skill knowledge without changing procedures
+4. **Reusability**: Core skills work across multiple workflow plugins
+
+### Source URLs
+- [ADR-005: Hexagonal Multi-Agent Architecture](./decisions/005-hexagonal-agent-architecture.md)
+- [ADR-006: humaninloop-core Plugin](./decisions/006-humaninloop-core-plugin.md)
+
+### Gaps
+- Skill naming conflicts between plugins not formally resolved by Claude Code
+- No explicit version compatibility between core and dependent plugin skills
+
+### Claude usage tips
+- When building skills for hexagonal systems, keep them purely declarative—no procedures
+- Skills should answer "what is good" not "how to do it"—procedures belong in agents
+- The `skills:` field in agent frontmatter is the composition mechanism
+- Core skills should be domain-agnostic and valuable standalone
+
+---
+
 ## Consolidated reference
 
 ### Complete SKILL.md template

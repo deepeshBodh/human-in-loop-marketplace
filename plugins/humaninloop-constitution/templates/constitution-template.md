@@ -28,6 +28,13 @@
 [PRINCIPLE_5_DESCRIPTION]
 <!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
+<!-- Optional: For projects with multi-layer or plugin architectures -->
+<!-- ### [ARCHITECTURE_PRINCIPLE_NAME] -->
+<!-- Example: VII. Hexagonal Layer Architecture -->
+<!-- [ARCHITECTURE_PRINCIPLE_DESCRIPTION] -->
+<!-- Example: Skills (innermost) → Agents (middle) → Workflows (outermost); Dependencies point inward only; Agents are stateless, workflows own state -->
+<!-- See docs/decisions/005-hexagonal-agent-architecture.md for reference -->
+
 ## [SECTION_2_NAME]
 <!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
 
@@ -39,6 +46,14 @@
 
 [SECTION_3_CONTENT]
 <!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+
+<!-- Optional: For complex projects with layered architecture -->
+<!-- ## Layer Responsibilities -->
+<!-- Define what each architectural layer owns: -->
+<!-- - **[LAYER_1]**: [RESPONSIBILITY] (e.g., Skills: Pure domain knowledge) -->
+<!-- - **[LAYER_2]**: [RESPONSIBILITY] (e.g., Agents: Procedures + judgment) -->
+<!-- - **[LAYER_3]**: [RESPONSIBILITY] (e.g., Workflows: Orchestration + state) -->
+<!-- Dependency rule: [DIRECTION] (e.g., Workflows → Agents → Skills) -->
 
 ## Governance
 <!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->

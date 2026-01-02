@@ -13,12 +13,18 @@ Official Claude Code plugin marketplace for [HumanInLoop](https://humaninloop.de
 ### Install Plugins
 
 ```bash
-# Install constitution plugin first (required by humaninloop)
+# Install in dependency order:
+
+# 1. Constitution (governance, no dependencies)
 /plugin install humaninloop-constitution
 /humaninloop-constitution:setup
 
-# Install main workflow plugin
-/plugin install humaninloop
+# 2. Core (shared skills and agents)
+/plugin install humaninloop-core
+
+# 3. Workflow plugins (depend on core)
+/plugin install humaninloop-specs  # Specification workflow
+/plugin install humaninloop        # Implementation workflow
 ```
 
 ### Browse Installed Plugins
@@ -27,26 +33,53 @@ Official Claude Code plugin marketplace for [HumanInLoop](https://humaninloop.de
 /plugin
 ```
 
+## Architecture
+
+The plugin ecosystem follows a **hexagonal architecture** with three layers:
+
+- **Skills** (innermost): Pure domain knowledge—atomic, composable, no dependencies
+- **Agents** (middle): Procedures + context + judgment—compose skills via `skills:` declarations
+- **Workflows** (outermost): Orchestration + state management—own all persistent state
+
+Dependencies point inward: Workflows → Agents → Skills. See [ADR-005](./docs/decisions/005-hexagonal-agent-architecture.md).
+
 ## Available Plugins
 
 | Plugin | Description | Commands |
 |--------|-------------|----------|
-| [humaninloop](./plugins/humaninloop) | Specification-driven development workflow: specify → plan → tasks → implement | `/humaninloop:specify`, `/humaninloop:plan`, `/humaninloop:tasks`, `/humaninloop:analyze`, `/humaninloop:checklist`, `/humaninloop:implement` |
-| [humaninloop-constitution](./plugins/humaninloop-constitution) | Project constitution setup for HumanInLoop workflows | `/humaninloop-constitution:setup` |
-
-### humaninloop
-
-Multi-agent specification-driven development workflow with integrated quality validation.
-
-**Agents:** 14 specialized agents for spec writing, validation, planning, task generation, and research
-**Commands:** `/humaninloop:specify`, `/humaninloop:plan`, `/humaninloop:tasks`, `/humaninloop:analyze`, `/humaninloop:checklist`, `/humaninloop:implement`
-**Requires:** `humaninloop-constitution` plugin
+| [humaninloop-constitution](./plugins/humaninloop-constitution) | Project constitution setup | `/humaninloop-constitution:setup` |
+| [humaninloop-core](./plugins/humaninloop-core) | Shared skills and agents (foundation) | (skills only) |
+| [humaninloop-specs](./plugins/humaninloop-specs) | Specification workflow | `/humaninloop-specs:specify`, `/humaninloop-specs:checklist` |
+| [humaninloop](./plugins/humaninloop) | Implementation workflow | `/humaninloop:plan`, `/humaninloop:tasks`, `/humaninloop:analyze`, `/humaninloop:implement` |
 
 ### humaninloop-constitution
 
 Project constitution setup defining core principles, governance rules, and development standards.
 
 **Commands:** `/humaninloop-constitution:setup`
+**Dependencies:** None (install first)
+
+### humaninloop-core
+
+Domain-agnostic skills and shared agents that provide standalone value and are used by workflow plugins.
+
+**Skills:** iterative-analysis, context-patterns, brownfield-patterns, validation-expertise, and more
+**Agents:** codebase-discovery, validator-agent
+**Dependencies:** humaninloop-constitution
+
+### humaninloop-specs
+
+Specification workflow with multi-agent quality validation.
+
+**Commands:** `/humaninloop-specs:specify`, `/humaninloop-specs:checklist`
+**Dependencies:** humaninloop-core, humaninloop-constitution
+
+### humaninloop
+
+Implementation workflow: plan → tasks → implement.
+
+**Commands:** `/humaninloop:plan`, `/humaninloop:tasks`, `/humaninloop:analyze`, `/humaninloop:implement`
+**Dependencies:** humaninloop-core, humaninloop-constitution
 
 ## Contributing
 
@@ -67,25 +100,34 @@ human-in-loop-marketplace/
 ├── .claude-plugin/
 │   └── marketplace.json           # Marketplace manifest
 ├── plugins/
-│   ├── humaninloop/               # Main workflow plugin
-│   │   ├── agents/                # 14 multi-agent workflow agents
-│   │   ├── commands/              # specify, plan, tasks, analyze, checklist, implement
-│   │   ├── check-modules/         # Validation check modules
-│   │   ├── scripts/               # Shell utilities
-│   │   └── templates/             # Workflow templates
-│   └── humaninloop-constitution/  # Constitution setup plugin
-│       ├── commands/              # setup command
-│       └── templates/             # Constitution template
+│   ├── humaninloop-constitution/  # Constitution setup (install first)
+│   │   ├── commands/
+│   │   └── templates/
+│   ├── humaninloop-core/          # Shared skills & agents (install second)
+│   │   ├── agents/                # codebase-discovery, validator-agent
+│   │   └── skills/                # Domain-agnostic skills
+│   ├── humaninloop-specs/         # Specification workflow
+│   │   ├── agents/
+│   │   ├── commands/
+│   │   ├── skills/
+│   │   └── templates/
+│   └── humaninloop/               # Implementation workflow
+│       ├── agents/
+│       ├── commands/
+│       ├── check-modules/         # Validation check modules (workflow config)
+│       ├── skills/
+│       └── templates/
 ├── specs/                         # Feature specifications
-│   ├── completed/                 # Shipped features
-│   ├── in-progress/               # Currently implementing
-│   └── planned/                   # Future features
+│   ├── completed/
+│   ├── in-progress/
+│   └── planned/
 ├── docs/
 │   ├── decisions/                 # Architecture Decision Records
+│   ├── agent-skills-documentation.md
 │   └── claude-plugin-documentation.md
-├── CHANGELOG.md                   # Release history
-├── ROADMAP.md                     # Vision and planned features
-├── RELEASES.md                    # Release philosophy
+├── CHANGELOG.md
+├── ROADMAP.md
+├── RELEASES.md
 ├── CONTRIBUTING.md
 └── LICENSE
 ```

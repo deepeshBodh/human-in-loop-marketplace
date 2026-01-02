@@ -1,6 +1,6 @@
 # ADR-006: humaninloop-core Plugin
 
-**Status**: Proposed
+**Status**: Accepted
 **Date**: 2026-01-02
 **Decision**: Create a standalone `humaninloop-core` plugin containing domain-agnostic skills and shared agents that other humaninloop plugins depend on
 
