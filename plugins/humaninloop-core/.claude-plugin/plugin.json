@@ -1,7 +1,7 @@
 {
   "name": "humaninloop-core",
-  "version": "1.0.0",
-  "description": "Domain-agnostic capabilities for software engineering: deep thinking, codebase understanding, context management, and validation patterns",
+  "version": "1.1.0",
+  "description": "Domain-agnostic capabilities for software engineering: deep thinking, codebase understanding, context management, validation patterns, prioritization, quality thinking, traceability, and decision-making",
   "author": {
     "name": "HumanInLoop",
     "url": "https://humaninloop.dev"
@@ -14,10 +14,15 @@
     "codebase",
     "validation",
     "patterns",
-    "software-engineering"
+    "software-engineering",
+    "prioritization",
+    "quality",
+    "traceability",
+    "decisions"
   ],
   "skills": "./skills/",
   "agents": [
-    "./agents/codebase-discovery.md"
+    "./agents/codebase-discovery.md",
+    "./agents/validator-agent.md"
   ]
 }

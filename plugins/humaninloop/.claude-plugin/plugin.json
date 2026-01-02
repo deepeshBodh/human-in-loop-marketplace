@@ -18,7 +18,6 @@
   "commands": "./commands/",
   "skills": "./skills/",
   "agents": [
-    "./agents/codebase-discovery.md",
     "./agents/plan-builder.md",
     "./agents/plan-validator.md",
     "./agents/task-builder.md",
