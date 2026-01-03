@@ -20,8 +20,9 @@ The question: How should we integrate Agent Skills into our multi-agent architec
 
 Adopt a **Skill-Augmented Agents** architecture where:
 
-- **Agents own workflow orchestration and state management**
-- **Skills own reusable expertise and deterministic validation**
+- **Supervisors own workflow orchestration and state management** (see [ADR-005](./005-decoupled-agents-architecture.md))
+- **Agents own domain expertise and artifact transformation**
+- **Skills own reusable patterns and deterministic validation**
 
 ### Skill Organization
 
@@ -80,14 +81,14 @@ skills: validation-plan, validation-spec
 
 | Alternative | Why Not |
 |-------------|---------|
-| **Skills replace agents** | Skills are stateless; our workflows require state management (.workflow/ context files) |
+| **Skills replace agents** | Skills are stateless; agents provide domain expertise for artifact transformation |
 | **Agents embed all expertise** | Knowledge is trapped, duplicated, and can't be reused outside workflows |
-| **Everything is a skill** | Loses workflow coordination; state management becomes fragmented |
-| **Skill-augmented agents** | Best of both: workflow control (agents) + reusable expertise (skills) |
+| **Everything is a skill** | Loses domain coordination; artifact transformation becomes fragmented |
+| **Skill-augmented agents** | Best of both: domain expertise (agents) + reusable patterns (skills), with supervisors handling workflow orchestration |
 
 ### Benefits
 
-1. **Separation of concerns** - Agents focus on orchestration; skills focus on expertise
+1. **Separation of concerns** - Supervisors orchestrate workflows; agents focus on domain expertise; skills provide reusable patterns
 2. **Reusability** - Skills work inside workflows AND independently
 3. **Token efficiency** - Progressive disclosure loads only what's needed
 4. **Determinism** - Script-backed validation provides consistent results
@@ -119,7 +120,7 @@ Scripts provide:
 
 ### Positive
 
-- Clear ownership: agents orchestrate, skills provide expertise
+- Clear ownership: supervisors orchestrate, agents transform artifacts, skills provide expertise
 - Skills are reusable across agents and outside workflows
 - Progressive disclosure minimizes context consumption
 - Deterministic validation via scripts
