@@ -8,30 +8,30 @@ This document outlines the vision and planned evolution of the HumanInLoop Marke
 
 The HumanInLoop Marketplace provides Claude Code plugins that enforce specification-driven development—ensuring architectural decisions are made by humans before AI writes code.
 
-## Current State (v0.2.9)
+## Current State (v0.3.0)
 
 The marketplace is in active development. The core specify → plan → tasks workflow is functional.
 
 ### Available Now
 
 **Commands:**
-- `/humaninloop:specify` - Create structured specifications
+- `/humaninloop:specify` - Create structured specifications using 2-agent architecture **(v0.3.0 - redesigned)**
 - `/humaninloop:plan` - Generate implementation plans
 - `/humaninloop:tasks` - Generate implementation tasks
 - `/humaninloop:analyze` - Analyze codebase context
 - `/humaninloop:checklist` - Generate implementation checklists
 - `/humaninloop:implement` - Execute implementation with tracking
 - `/humaninloop-constitution:setup` - Initialize project constitution **(v1.2.0)**
-- `/humaninloop-experiments:specify` - Create specifications using decoupled two-agent pattern **(experimental, v0.1.0)**
+- `/humaninloop-experiments:specify` - Experimental specifications (sandbox for new patterns)
 
 **Skills** (auto-invoked by Claude):
 - `authoring-requirements` - Write functional requirements using FR-XXX format with RFC 2119 keywords
 - `authoring-user-stories` - Write user stories with P1/P2/P3 priorities and Given/When/Then acceptance
 - `iterative-analysis` - Progressive brainstorming with recommendations and synthesis
+- `reviewing-specifications` - Review specs and find gaps **(v0.3.0 - added)**
 - `authoring-constitution` - Write enforceable constitution content with Enforcement/Testability/Rationale
 - `analyzing-project-context` - Infer project characteristics from codebase for constitution authoring
 - `syncing-claude-md` - Ensure CLAUDE.md mirrors constitution sections per sync mapping
-- `reviewing-specifications` - Review specs and find gaps (humaninloop-experiments)
 
 ---
 

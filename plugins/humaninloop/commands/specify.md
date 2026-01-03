@@ -1,10 +1,10 @@
 ---
-description: Create feature specification using multi-agent architecture with integrated checklist validation and priority loop
+description: Create feature specification using decoupled two-agent architecture (Requirements Analyst + Devil's Advocate)
 ---
 
-# Unified Specify Workflow with Priority Loop
+# Decoupled Specify Workflow
 
-You are the **Supervisor Agent** orchestrating a multi-agent workflow that creates feature specifications with integrated quality validation. The workflow uses a Priority Loop to ensure all Critical and Important gaps are resolved before the spec is considered complete.
+You are the **Supervisor** orchestrating a two-agent specification workflow. You own the loop, manage state via files, and route based on agent outputs.
 
 ## User Input
 
@@ -37,53 +37,6 @@ AskUserQuestion(
 
 ---
 
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    UNIFIED SPECIFY WORKFLOW                          │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  PHASE A: Initial Specification                                      │
-│  ├── Scaffold Agent                                                  │
-│  ├── Spec Writer Agent                                               │
-│  ├── Checklist Context Analyzer                                      │
-│  ├── Checklist Writer Agent                                          │
-│  └── Gap Classifier Agent                                            │
-│                                                                      │
-│  PHASE B: Priority Loop                                              │
-│  WHILE (critical + important > 0) AND (iteration < 10):             │
-│  ├── Read Gap Priority Queue from index.md                          │
-│  ├── Check termination conditions                                    │
-│  ├── Present gaps via AskUserQuestion                               │
-│  ├── Spec Clarify Agent (apply answers)                             │
-│  ├── Re-run Checklist Writer                                        │
-│  ├── Re-run Gap Classifier                                           │
-│  └── Update index.md state                                           │
-│                                                                      │
-│  PHASE C: Completion                                                 │
-│  ├── Log deferred minor gaps                                         │
-│  ├── Finalize traceability matrix                                   │
-│  └── Report quality metrics                                          │
-│                                                                      │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Agents Used
-
-| Agent | File | Purpose |
-|-------|------|---------|
-| Scaffold | `${CLAUDE_PLUGIN_ROOT}/agents/scaffold-agent.md` | Create branch, directories, initialize context |
-| Spec Writer | `${CLAUDE_PLUGIN_ROOT}/agents/spec-writer.md` | Write user stories, requirements, criteria |
-| Checklist Context Analyzer | `${CLAUDE_PLUGIN_ROOT}/agents/checklist-context-analyzer.md` | Extract signals, identify focus areas |
-| Checklist Writer | `${CLAUDE_PLUGIN_ROOT}/agents/checklist-writer.md` | Generate quality checklist, classify gaps |
-| Gap Classifier | `${CLAUDE_PLUGIN_ROOT}/agents/gap-classifier.md` | Group gaps, generate clarifications |
-| Spec Clarify | `${CLAUDE_PLUGIN_ROOT}/agents/spec-clarify.md` | Apply user answers, update spec |
-
----
-
 ## Pre-Execution: Constitution Check
 
 Before any workflow execution, verify that the project constitution exists:
@@ -110,454 +63,392 @@ Then retry /humaninloop:specify
 
 ---
 
+## Architecture Overview
+
+```
+SUPERVISOR (this command)
+    │
+    ├── Creates scaffold + directories
+    ├── Invokes agents with minimal prompts
+    ├── Parses structured prose outputs
+    ├── Updates scaffold between iterations
+    └── Owns all routing decisions
+
+AGENTS (independent, no workflow knowledge)
+    │
+    ├── Requirements Analyst → Writes spec.md
+    └── Devil's Advocate → Reviews spec.md, finds gaps
+```
+
+**Communication Pattern**: Scaffold + Spec File + Separate Reports
+
+```
+specs/{feature-id}/
+├── spec.md                          # The deliverable
+└── .workflow/
+    ├── scaffold.md                  # Context + instructions
+    ├── analyst-report.md            # Requirements Analyst output
+    └── advocate-report.md           # Devil's Advocate output
+```
+
+---
+
+## Agents Used
+
+| Agent | File | Purpose |
+|-------|------|---------|
+| Requirements Analyst | `${CLAUDE_PLUGIN_ROOT}/agents/requirements-analyst.md` | Transform feature request into spec |
+| Devil's Advocate | `${CLAUDE_PLUGIN_ROOT}/agents/devils-advocate.md` | Review spec, find gaps, generate clarifications |
+
+---
+
 ## Pre-Execution: Resume Detection
 
-Before starting, check if a workflow is already in progress:
+Before starting, check for interrupted workflows:
 
-1. **Search for existing index.md files** in `specs/` with `loop_status != completed`
-2. **If found with matching feature**:
+1. **Search for existing scaffolds** with `status` not `completed`:
+   ```bash
+   find specs -name "scaffold.md" -path "*/.workflow/*" 2>/dev/null
+   ```
+
+2. **If found**: Read scaffold frontmatter, check `status` field
+
+3. **If status is not completed**:
    ```
    AskUserQuestion(
      questions: [{
-       question: "Found interrupted workflow for '{feature_id}'. Resume or start fresh?",
+       question: "Found interrupted workflow for '{feature_id}' (status: {status}). Resume or start fresh?",
        header: "Resume?",
        options: [
-         {label: "Resume from iteration {N}", description: "Continue where you left off"},
+         {label: "Resume", description: "Continue from where you left off"},
          {label: "Start fresh", description: "Delete existing and start over"}
        ],
        multiSelect: false
      }]
    )
    ```
-3. **If resume**: Read index.md state and jump to appropriate phase
-4. **If fresh start**: Delete existing feature directory and proceed
+
+4. **If resume**: Read scaffold, jump to appropriate phase based on status
+5. **If fresh**: Delete existing feature directory and proceed
 
 ---
 
-## Phase A: Initial Specification
+## Phase 1: Initialize
 
-### A1: Scaffold
+### 1.1 Generate Feature ID
 
-**Spawn the Scaffold Agent** using the Task tool:
+Create a feature ID from the user input:
+- Slugify the description (lowercase, hyphens, max 40 chars)
+- Prefix with sequence number if specs directory has existing features
+- Example: `001-user-authentication`
 
+### 1.2 Create Directory Structure
+
+```bash
+mkdir -p specs/{feature-id}/.workflow
 ```
-Task(
-  subagent_type: "scaffold-agent",
-  description: "Scaffold feature branch",
-  prompt: "Execute scaffold for feature: $ARGUMENTS"
-)
-```
 
-**Extract from result**:
-- `feature_id`: e.g., "005-user-auth"
-- `spec_path`: e.g., "specs/005-user-auth/spec.md"
-- `index_path`: e.g., "specs/005-user-auth/.workflow/index.md"
-- `specify_context_path`: e.g., "specs/005-user-auth/.workflow/specify-context.md"
-- `feature_dir`: e.g., "specs/005-user-auth/"
+### 1.3 Create Scaffold
 
-**If scaffold fails**: Report error and stop.
+Use the template at `${CLAUDE_PLUGIN_ROOT}/templates/scaffold-template.md`.
+
+Write to `specs/{feature-id}/.workflow/scaffold.md` with these values:
+
+| Placeholder | Value |
+|-------------|-------|
+| `{{status}}` | `awaiting-analyst` |
+| `{{iteration}}` | `1` |
+| `{{feature_id}}` | Generated feature ID |
+| `{{created}}` | ISO date |
+| `{{updated}}` | ISO date |
+| `{{user_input}}` | Original user input from $ARGUMENTS |
+| `{{project_name}}` | Detected from package.json, etc. |
+| `{{tech_stack}}` | Detected |
+| `{{constitution_path}}` | Path if exists, or "not configured" |
+| `{{constitution_principles}}` | Extracted key principles, or "No constitution configured. Use general best practices." |
+| `{{spec_path}}` | `specs/{feature-id}/spec.md` |
+| `{{scaffold_path}}` | `specs/{feature-id}/.workflow/scaffold.md` |
+| `{{analyst_report_path}}` | `specs/{feature-id}/.workflow/analyst-report.md` |
+| `{{advocate_report_path}}` | `specs/{feature-id}/.workflow/advocate-report.md` |
+| `{{supervisor_instructions}}` | See Phase 2 for initial analyst instructions |
+| `{{clarification_log}}` | Empty on first iteration |
+
+### 1.4 Create Spec File
+
+Use the template at `${CLAUDE_PLUGIN_ROOT}/templates/spec-template.md`.
+
+Write to `specs/{feature-id}/spec.md` with initial values:
+
+| Placeholder | Value |
+|-------------|-------|
+| `{{feature_title}}` | Derived from user input |
+| `{{feature_id}}` | Generated feature ID |
+| `{{created}}` | ISO date |
+| `{{status}}` | `draft` |
+| All other sections | Empty (to be filled by analyst) |
 
 ---
 
-### A2: Write Specification
+## Phase 2: Requirements Analyst
 
-**Spawn the Spec Writer Agent**:
+### 2.1 Set Supervisor Instructions for Analyst
+
+Update `{{supervisor_instructions}}` in scaffold:
+
+```markdown
+Create a feature specification based on the user input above.
+
+**Read**:
+- Spec template: `${CLAUDE_PLUGIN_ROOT}/templates/spec-template.md`
+
+**Write**:
+- Spec: `specs/{feature-id}/spec.md`
+- Report: `specs/{feature-id}/.workflow/analyst-report.md`
+
+**Report format**: Follow `${CLAUDE_PLUGIN_ROOT}/templates/analyst-report-template.md`
+```
+
+### 2.2 Update Scaffold Status
+
+Update scaffold frontmatter:
+```yaml
+status: awaiting-analyst
+updated: {ISO date}
+```
+
+### 2.3 Invoke Agent
 
 ```
 Task(
-  subagent_type: "spec-writer",
-  description: "Write spec content",
-  prompt: [Include feature_id, spec_path, index_path, specify_context_path, description]
+  subagent_type: "humaninloop:requirements-analyst",
+  prompt: "Read your instructions from: specs/{feature-id}/.workflow/scaffold.md",
+  description: "Write feature specification"
 )
 ```
 
-**Extract from result**:
-- `user_story_count`
-- `requirement_count`
-- `initial_clarifications`: Any spec-writing clarifications (Q-S#)
-- `index_synced`: Confirmation index.md was updated
+### 2.4 Verify Output
+
+Confirm the agent created:
+- `specs/{feature-id}/spec.md` (updated with content)
+- `specs/{feature-id}/.workflow/analyst-report.md`
+
+If missing, report error and stop.
 
 ---
 
-### A3: Initial Validation (Checklist)
+## Phase 3: Devil's Advocate
 
-**Spawn Checklist Context Analyzer**:
+### 3.1 Set Supervisor Instructions for Advocate
+
+Update `{{supervisor_instructions}}` in scaffold:
+
+```markdown
+Review the specification and find gaps.
+
+**Read**:
+- Spec: `specs/{feature-id}/spec.md`
+- Analyst report: `specs/{feature-id}/.workflow/analyst-report.md`
+
+**Write**:
+- Report: `specs/{feature-id}/.workflow/advocate-report.md`
+
+**Report format**: Follow `${CLAUDE_PLUGIN_ROOT}/templates/advocate-report-template.md`
+```
+
+### 3.2 Update Scaffold Status
+
+Update scaffold frontmatter:
+```yaml
+status: awaiting-advocate
+updated: {ISO date}
+```
+
+### 3.3 Invoke Agent
 
 ```
 Task(
-  subagent_type: "checklist-context-analyzer",
-  description: "Analyze spec for checklist",
-  prompt: [Include feature_id, specify_context_path]
+  subagent_type: "humaninloop:devils-advocate",
+  prompt: "Read your instructions from: specs/{feature-id}/.workflow/scaffold.md",
+  description: "Review spec for gaps"
 )
 ```
 
-**Then spawn Checklist Writer**:
+### 3.4 Parse Advocate Report
 
-```
-Task(
-  subagent_type: "checklist-writer",
-  description: "Generate checklist with gaps",
-  prompt: [Include feature_id, specify_context_path, focus_areas]
-)
-```
-
-**Extract from result**:
-- `gaps`: Object with critical, important, minor arrays
-- `gap_summary`: Counts of each priority
-- `checklist_file`: Path to generated checklist
+Read `specs/{feature-id}/.workflow/advocate-report.md` and extract:
+- `verdict`: ready | needs-clarification | major-gaps
+- `gaps`: List of gaps with severity
+- `clarifications`: List of questions
 
 ---
 
-### A4: Classify Gaps
+## Phase 4: Route Based on Verdict
 
-**If gaps.critical.length + gaps.important.length > 0**:
+### If Verdict is `ready`
 
-**Spawn Gap Classifier Agent**:
+1. Update scaffold status to `completed`
+2. Generate completion report (see Phase 5)
+3. Exit workflow
 
-```
-Task(
-  subagent_type: "gap-classifier",
-  description: "Classify and group gaps",
-  prompt: [Execute gap classification with gaps output]
-)
-```
+### If Verdict is `needs-clarification` or `major-gaps`
 
-**Extract from result**:
-- `clarifications`: Array of grouped clarification questions
-- `clarification_count`: Number of clarifications (max 3)
-- `grouping_summary`: How gaps were grouped
+1. **Present clarifications to user** using AskUserQuestion:
+   ```
+   AskUserQuestion(
+     questions: clarifications.map(c => ({
+       question: c.question,
+       header: c.gap_id,
+       options: c.options || [
+         {label: "Yes", description: ""},
+         {label: "No", description: ""},
+         {label: "Not sure", description: "Needs more discussion"}
+       ],
+       multiSelect: false
+     }))
+   )
+   ```
 
-**Then proceed to Phase B.**
+2. **Update scaffold with user answers**:
+   Append to `## Clarification Log`:
+   ```markdown
+   ### Iteration {N}
 
-**If no Critical/Important gaps**: Skip to Phase C (completion).
+   #### Gaps Identified
+   {List from advocate report}
+
+   #### User Answers
+   | Gap ID | Question | Answer |
+   |--------|----------|--------|
+   | G1 | {question} | {user's answer} |
+   | G2 | {question} | {user's answer} |
+   ```
+
+3. **Update supervisor instructions for next analyst pass**:
+   ```markdown
+   Revise the specification based on user feedback.
+
+   **Read**:
+   - Current spec: `specs/{feature-id}/spec.md`
+   - Gaps and user answers: See `## Clarification Log` below
+   - Spec template: `${CLAUDE_PLUGIN_ROOT}/templates/spec-template.md`
+
+   **Write**:
+   - Updated spec: `specs/{feature-id}/spec.md`
+   - Report: `specs/{feature-id}/.workflow/analyst-report.md`
+
+   **Report format**: Follow `${CLAUDE_PLUGIN_ROOT}/templates/analyst-report-template.md`
+   ```
+
+4. **Increment iteration** in scaffold frontmatter
+
+5. **Loop back to Phase 2**
 
 ---
 
-## Phase B: Priority Loop
+## Supervisor Judgment: When to Exit Early
 
-```
-iteration = 1
-max_iterations = 10
-stale_threshold = 3
+Use your judgment to recommend exiting if:
 
-WHILE (has_unresolved_gaps() AND iteration <= max_iterations):
+- **Iteration count exceeds 5**: Recommend accepting current spec or manual review
+- **User answers aren't resolving gaps**: Ask how to proceed
+- **Only minor gaps remain**: Offer to finalize with known limitations
+- **User seems satisfied**: Offer to complete even with open gaps
 
-  # B1: Present clarifications to user
-  # B2: Process user answers
-  # B3: Re-validate spec
-  # B4: Check termination conditions
-  # B5: Update state and iterate
-```
-
-### B1: Present Clarifications
-
-Use `AskUserQuestion` to present all clarifications at once:
+Always give the user the choice—never force-terminate without consent:
 
 ```
 AskUserQuestion(
-  questions: clarifications.map(c => ({
-    question: c.question,
-    header: c.id,  // "C1.1", "C1.2", etc.
-    options: c.options.map(opt => ({
-      label: opt,
-      description: ""
-    })),
+  questions: [{
+    question: "We've iterated {N} times. {Context}. How should we proceed?",
+    header: "Next Step",
+    options: [
+      {label: "Continue refining", description: "Another round of clarification"},
+      {label: "Accept current spec", description: "Finalize with known gaps as limitations"},
+      {label: "Stop and review manually", description: "Exit workflow, review spec yourself"}
+    ],
     multiSelect: false
-  }))
+  }]
 )
 ```
 
 ---
 
-### B2: Process User Answers
+## Phase 5: Completion
 
-**Spawn Spec Clarify Agent** with answers:
+### 5.1 Update Final Status
 
-```
-Task(
-  subagent_type: "spec-clarify",
-  description: "Apply clarifications",
-  prompt: [Include feature_id, paths, iteration, user_answers JSON]
-)
+Update scaffold frontmatter:
+```yaml
+status: completed
+updated: {ISO date}
 ```
 
-**Extract from result**:
-- `answers_applied`: Count of answers applied to spec
-- `spec_updated`: Boolean
-- `remaining_markers`: Any remaining [NEEDS CLARIFICATION] markers
+### 5.2 Generate Completion Report
 
----
-
-### B3: Re-Validate Spec
-
-**Re-run Checklist Writer** to check if gaps are resolved:
-
-```
-Task(
-  subagent_type: "checklist-writer",
-  description: "Re-validate spec",
-  prompt: [Include feature_id, specify_context_path, iteration]
-)
-```
-
-**If new gaps found**, re-run Gap Classifier:
-
-```
-Task(
-  subagent_type: "gap-classifier",
-  description: "Classify new gaps",
-  prompt: [Execute gap classification with new gaps]
-)
-```
-
----
-
-### B4: Check Termination Conditions
-
-**Condition 1: Success (Zero Critical + Important)**
-```
-if (gaps.critical.length == 0 AND gaps.important.length == 0):
-  termination_reason = "success"
-  BREAK
-```
-
-**Condition 2: Max Iterations**
-```
-if (iteration >= 10):
-  termination_reason = "max_iterations"
-  log_remaining_gaps_as_known_issues()
-  BREAK
-```
-
-**Condition 3: Stale Detection**
-```
-if (same_gaps_for_3_iterations):
-  termination_reason = "stale"
-  escalate_to_user("These gaps remain unresolved after 3 attempts:")
-  force_user_decision()
-  BREAK
-```
-
-**Condition 4: No Progress**
-```
-if (resolved_this_iteration == 0):
-  termination_reason = "no_progress"
-  AskUserQuestion(
-    questions: [{
-      question: "No gaps were resolved. How should we proceed?",
-      header: "No Progress",
-      options: [
-        {label: "Try again", description: "Re-attempt with different answers"},
-        {label: "Accept current spec", description: "Mark gaps as known issues"},
-        {label: "Abort workflow", description: "Cancel and review manually"}
-      ]
-    }]
-  )
-```
-
----
-
-### B5: Update State and Iterate
-
-Update index.md Priority Loop State:
-```markdown
-| **Loop Status** | validating |
-| **Current Iteration** | {iteration} / 10 |
-| **Last Activity** | {timestamp} |
-| **Stale Count** | {stale_count} / 3 |
-```
-
-Update Gap Priority Queue with resolution status.
-
-```
-iteration++
-CONTINUE LOOP
-```
-
----
-
-## Phase C: Completion
-
-### C1: Log Deferred Minor Gaps
-
-If any Minor gaps were deferred:
-```markdown
-## Known Minor Gaps (Deferred)
-
-| Gap ID | Description | FR Reference |
-|--------|-------------|--------------|
-| G-005 | Password strength UI not specified | FR-012 |
-```
-
-Update index.md:
-- Set `deferred_count` in Priority Loop State
-- Add to Gap Resolution History with status `deferred`
-
----
-
-### C2: Finalize Traceability Matrix
-
-Ensure all Requirements have checklist coverage:
-```markdown
-### Requirements → Checklist Coverage
-
-| FR ID | CHK IDs | Coverage Status | Notes |
-|-------|---------|-----------------|-------|
-| FR-001 | CHK001, CHK015 | ✓ Covered | - |
-| FR-002 | CHK005 | ✓ Covered | - |
-| FR-003 | CHK012 | ✓ Covered | Gap resolved in iteration 2 |
-```
-
----
-
-### C3: Generate Quality Report
+Output to user:
 
 ```markdown
-## Specification Quality Report
+## Specification Complete
 
-**Feature**: {{feature_id}}
-**Branch**: `{{branch_name}}`
-
-### Validation Summary
-| Metric | Value |
-|--------|-------|
-| Total Iterations | {{iteration_count}} |
-| Termination Reason | {{termination_reason}} |
-| Critical Gaps Resolved | {{critical_resolved}} |
-| Important Gaps Resolved | {{important_resolved}} |
-| Minor Gaps Deferred | {{minor_deferred}} |
-| Traceability Coverage | {{coverage_percent}}% |
+**Feature**: {feature_id}
+**Iterations**: {count}
 
 ### Files Created
-- Spec: `{{spec_path}}`
-- Checklist: `{{feature_dir}}/checklists/requirements.md`
-- Index: `{{index_path}}`
-- Context: `{{specify_context_path}}`
+- Spec: `specs/{feature-id}/spec.md`
+- Workflow: `specs/{feature-id}/.workflow/`
 
-### Specification Stats
-- User Stories: {{user_story_count}}
-- Functional Requirements: {{requirement_count}}
-- Success Criteria: {{criteria_count}}
+### Summary
+{From analyst report: user story count, requirement count}
+
+### Known Limitations
+{Any minor gaps deferred, if applicable}
 
 ### Next Steps
-1. Review the spec at `{{spec_path}}`
+1. Review the spec at `specs/{feature-id}/spec.md`
 2. Run `/humaninloop:plan` to create implementation plan
-```
-
----
-
-### C4: Update Final State
-
-Update index.md:
-```markdown
-## Priority Loop State
-
-| Field | Value |
-|-------|-------|
-| **Loop Status** | completed |
-| **Current Iteration** | {{final_iteration}} / 10 |
-| **Last Activity** | {{timestamp}} |
-| **Termination Reason** | {{reason}} |
-| **Deferred Minor Gaps** | {{deferred_count}} |
-```
-
-Update Workflow Status Table:
-```markdown
-| specify | completed | {{timestamp}} | supervisor | specify-context.md |
 ```
 
 ---
 
 ## Error Handling
 
-### Scaffold Failure
+### Agent Failure
+
 ```markdown
-**Scaffold Failed**
+**Agent Failed**
 
-Error: {{error_message}}
+Error: {error_message}
+Agent: {agent_name}
+Phase: {phase}
 
-Please check:
-- Git repository is initialized
-- `.humaninloop/` directory exists
-- You have write permissions
+The workflow state has been saved. Run `/humaninloop:specify` to resume.
 ```
 
-### Agent Failure Mid-Loop
-```markdown
-**Agent Failure in Iteration {{iteration}}**
+### Missing Files
 
-Error: {{error_message}}
-Failed Agent: {{agent_name}}
-
-The workflow state has been preserved in index.md.
-Run `/humaninloop:specify` to resume from iteration {{iteration}}.
-```
-
-### Stale Escalation
-```markdown
-**Stale Gaps Detected**
-
-The following gaps have remained unresolved for 3 iterations:
-
-{{gap_list}}
-
-Options:
-1. Provide different answers
-2. Accept gaps as known limitations
-3. Manually edit spec.md
-```
+If expected output files are missing after agent invocation:
+1. Log the issue
+2. Ask user: Retry agent, or abort?
 
 ---
 
 ## State Recovery
 
-The workflow supports resume from any point:
+Resume logic based on `status` field:
 
-1. **Read index.md** from specs directories
-2. **Check Priority Loop State**:
-   - `not_started`: Begin Phase A
-   - `scaffolding`: Resume A1
-   - `spec_writing`: Resume A2
-   - `validating`: Resume A3/A4 or B3
-   - `clarifying`: Resume B1/B2
-   - `completed`: Report already done
-   - `terminated`: Report termination reason
-3. **Read Gap Priority Queue** to restore gap state
-4. **Read Gap Resolution History** to determine progress
-
----
-
-## Knowledge Sharing Protocol
-
-All agents share state via the **Hybrid Context Architecture**:
-
-1. **Index File** (`index.md`):
-   - Priority Loop State (NEW)
-   - Gap Priority Queue (NEW)
-   - Traceability Matrix (NEW)
-   - Gap Resolution History (NEW)
-   - Unified Pending Questions
-   - Unified Decisions Log
-
-2. **Specify Context** (`specify-context.md`):
-   - Specification Progress
-   - Extracted Signals (from checklist context)
-   - Checklist Configuration
-   - Agent Handoff Notes
-
-3. **Prompt Injection**: Pass extracted data between agents
-
-4. **Filesystem**: Agents read/write spec.md, checklists, context files
+| Status | Resume Point |
+|--------|--------------|
+| `awaiting-analyst` | Phase 2 (invoke analyst) |
+| `awaiting-advocate` | Phase 3 (invoke advocate) |
+| `awaiting-user` | Phase 4 (present clarifications) |
+| `completed` | Report already done |
 
 ---
 
 ## Important Notes
 
-- Do NOT modify git config
-- Do NOT push to remote
-- Do NOT skip validation phases
-- Maximum 10 Priority Loop iterations
-- Maximum 3 clarifications per iteration
-- Always use Task tool for agents
-- Handle AskUserQuestion responses before spawning next agent
-- Log all gap resolutions in Gap Resolution History
+- Do NOT modify git config or push to remote
+- Maximum practical iterations: ~5 (use judgment, not hard limit)
+- Always use Task tool to invoke agents
+- Agents have NO workflow knowledge—all context via scaffold
+- Supervisor owns ALL routing and state decisions

@@ -39,10 +39,11 @@ Create a feature specification with integrated quality validation.
 ```
 
 **Workflow:**
-1. Create a feature branch (e.g., `001-user-auth`)
-2. Generate structured specification in `specs/001-user-auth/spec.md`
-3. Run automatic quality validation via Priority Loop
-4. Present gaps for clarification until resolved
+1. Create feature directory (e.g., `specs/001-user-auth/`)
+2. Requirements Analyst generates structured specification
+3. Devil's Advocate reviews and finds gaps
+4. User answers clarifying questions
+5. Loop until specification is ready or user accepts
 
 ### `/humaninloop:plan`
 
@@ -89,12 +90,8 @@ Generate implementation tasks from an existing plan.
 
 | Agent | Purpose |
 |-------|---------|
-| **Scaffold Agent** | Creates branch, directories, and initializes templates |
-| **Spec Writer Agent** | Generates user stories, requirements, success criteria |
-| **Checklist Context Analyzer** | Extracts signals for quality validation |
-| **Checklist Writer Agent** | Generates validation checklists |
-| **Gap Classifier Agent** | Groups and prioritizes specification gaps |
-| **Spec Clarify Agent** | Applies user answers to resolve gaps |
+| **Requirements Analyst** | Transforms feature requests into precise specifications with user stories, requirements, and acceptance criteria |
+| **Devil's Advocate** | Adversarial reviewer who stress-tests specs, finds gaps, challenges assumptions, and generates clarifying questions |
 
 ### Plan Workflow Agents
 
@@ -144,13 +141,13 @@ specs/<###-feature-name>/
 ├── task-mapping.md            # Story-to-component mappings
 ├── tasks.md                   # Actionable task list
 ├── contracts/                 # API specifications (OpenAPI)
-├── checklists/
-│   └── requirements.md        # Quality validation checklist
+├── checklists/                # Manual quality checklists (via /humaninloop:checklist)
 └── .workflow/
-    ├── index.md              # Cross-workflow state
-    ├── specify-context.md    # Specify workflow state
-    ├── plan-context.md       # Plan workflow state
-    └── tasks-context.md      # Tasks workflow state
+    ├── scaffold.md            # Specify workflow context
+    ├── analyst-report.md      # Requirements Analyst output
+    ├── advocate-report.md     # Devil's Advocate output
+    ├── plan-context.md        # Plan workflow state
+    └── tasks-context.md       # Tasks workflow state
 ```
 
 ## Specification Format

@@ -6,6 +6,53 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and this pro
 
 ---
 
+## [0.3.0] - 2026-01-03
+
+**BREAKING CHANGE**: Major architecture overhaul of the specify workflow.
+
+### humaninloop 0.3.0
+
+#### Breaking Changes
+- **Specify workflow redesigned** - Replaced 6-agent Priority Loop architecture with streamlined 2-agent Supervisor pattern
+  - Old architecture (removed): Scaffold Agent → Spec Writer → Checklist Context Analyzer → Checklist Writer → Gap Classifier → Spec Clarify
+  - New architecture: Requirements Analyst ↔ Devil's Advocate (supervised loop)
+- **Workflow artifacts changed** - New structure uses `scaffold.md`, `analyst-report.md`, `advocate-report.md` instead of `index.md`, `specify-context.md`, and checklist files
+- **Constitution still required** - Pre-flight check remains; run `/humaninloop-constitution:setup` first
+
+#### New Agents
+- **requirements-analyst** - Senior analyst who transforms vague feature requests into precise specifications with user stories, functional requirements, and acceptance criteria
+- **devils-advocate** - Adversarial reviewer who stress-tests specifications by finding gaps, challenging assumptions, and identifying edge cases
+
+#### New Skill
+- **reviewing-specifications** - Review specs to find gaps and generate product-focused clarifying questions (not technical implementation questions)
+
+#### New Templates
+- `scaffold-template.md` - Scaffold for supervisor-agent communication
+- `analyst-report-template.md` - Report format for requirements analyst output
+- `advocate-report-template.md` - Report format for devil's advocate output
+
+#### Removed Agents
+- `scaffold-agent.md` - Replaced by inline scaffolding in supervisor
+- `spec-writer.md` - Replaced by requirements-analyst
+- `spec-clarify.md` - Clarification now handled in supervisor loop
+- `checklist-context-analyzer.md` - Checklist validation removed from specify
+- `checklist-writer.md` - Checklist validation removed from specify
+- `gap-classifier.md` - Gap classification now part of devil's advocate
+
+#### Removed Templates
+- `specify-context-template.md`
+- `checklist-context-template.md`
+- `workflow-index-template.md`
+- `workflow-context-template.md`
+
+#### Migration Guide
+1. The `/humaninloop:checklist` command remains available for manual quality validation
+2. Existing specs in `specs/` directory remain compatible
+3. New specs will use the simpler `.workflow/` structure with scaffold and reports
+4. No changes to `/humaninloop:plan`, `/humaninloop:tasks`, or other commands
+
+---
+
 ## [0.2.9] - 2026-01-03
 
 Fix for humaninloop-experiments skills invocation.
@@ -260,6 +307,7 @@ Initial marketplace scaffold.
 
 ---
 
+[0.3.0]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.3.0
 [0.2.9]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.9
 [0.2.8]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.8
 [0.2.7]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.7
