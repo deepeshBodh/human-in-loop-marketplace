@@ -6,6 +6,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and this pro
 
 ---
 
+## [0.2.9] - 2026-01-03
+
+Fix for humaninloop-experiments skills invocation.
+
+### humaninloop-experiments 0.1.1
+
+#### Fixes
+- **Standardized skills invocation in agents** - Both agents now properly declare `skills:` in frontmatter
+  - Added `skills: authoring-requirements, authoring-user-stories` to requirements-analyst
+  - Added `skills: reviewing-specifications` to devils-advocate
+  - Added "Skills Available" section with Skill tool guidance to devils-advocate
+  - Removed duplicated content from devils-advocate that was already in reviewing-specifications skill
+
+---
+
 ## [0.2.8] - 2026-01-03
 
 New experimental plugin with decoupled agents architecture.
@@ -245,6 +260,7 @@ Initial marketplace scaffold.
 
 ---
 
+[0.2.9]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.9
 [0.2.8]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.8
 [0.2.7]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.7
 [0.2.6]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.6
