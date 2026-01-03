@@ -6,6 +6,32 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and this pro
 
 ---
 
+## [0.2.8] - 2026-01-03
+
+New experimental plugin with decoupled agents architecture.
+
+### humaninloop-experiments 0.1.0 (NEW)
+
+#### New Plugin
+- **humaninloop-experiments** - Experimental sandbox for testing new agent patterns
+  - Implements decoupled two-agent specify workflow
+  - Uses scaffold-based communication between agents
+  - Standalone plugin (does not require humaninloop)
+
+#### New Commands
+- `/humaninloop-experiments:specify` - Create specifications using Requirements Analyst + Devil's Advocate pattern
+
+#### New Agents
+- `requirements-analyst` - Transforms vague requests into precise specifications
+- `devils-advocate` - Adversarial reviewer who stress-tests specs and finds gaps
+
+#### New Skills
+- `authoring-requirements` - Write functional requirements (standalone copy)
+- `authoring-user-stories` - Write user stories (standalone copy)
+- `reviewing-specifications` - Review specs and find gaps, ambiguities, and missing scenarios
+
+---
+
 ## [0.2.7] - 2026-01-03
 
 New authoring skills for specification writing and constitution decoupled architecture.
@@ -23,25 +49,6 @@ New authoring skills for specification writing and constitution decoupled archit
 #### Documentation
 - Added ADR-004: Skill-Augmented Agents Architecture
 - Added ADR-005: Decoupled Agents Architecture
-
-### humaninloop-experiments 0.1.0 (NEW)
-
-#### New Plugin
-- **humaninloop-experiments** - Experimental sandbox for testing new agent patterns
-  - Implements decoupled two-agent specify workflow
-  - Uses scaffold-based communication between agents
-
-#### New Commands
-- `/humaninloop-experiments:specify` - Create specifications using Requirements Analyst + Devil's Advocate pattern
-
-#### New Agents
-- `requirements-analyst` - Transforms vague requests into precise specifications
-- `devils-advocate` - Adversarial reviewer who stress-tests specs and finds gaps
-
-#### New Skills
-- `authoring-requirements` - Write functional requirements (shared with humaninloop)
-- `authoring-user-stories` - Write user stories (shared with humaninloop)
-- `reviewing-specifications` - Review specs and find gaps, ambiguities, and missing scenarios
 
 ### humaninloop-constitution 1.2.0
 
@@ -238,6 +245,7 @@ Initial marketplace scaffold.
 
 ---
 
+[0.2.8]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.8
 [0.2.7]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.7
 [0.2.6]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.6
 [0.2.5]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.5
