@@ -14,7 +14,7 @@ $ARGUMENTS
 
 ## Workflow
 
-This supervisor follows ADR-005 decoupled architecture: create scaffold → invoke agent → iterate if needed → finalize.
+This supervisor follows a decoupled architecture: create scaffold → invoke agent → iterate if needed → finalize.
 
 ### Phase 1: Initialize
 

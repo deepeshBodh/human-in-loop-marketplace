@@ -96,7 +96,7 @@ ls -la CLAUDE.md CONTRIBUTING.md .github/PULL_REQUEST_TEMPLATE.md 2>/dev/null
 ls -la docs/architecture* docs/adr/* ADR/* 2>/dev/null
 
 # Look for existing constitution
-ls -la .humaninloop/memory/constitution.md .specify/memory/constitution.md 2>/dev/null
+ls -la .humaninloop/memory/constitution.md 2>/dev/null
 ```
 
 ### Extract Convention Summary
