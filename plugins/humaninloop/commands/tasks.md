@@ -1,13 +1,5 @@
 ---
 description: Execute the multi-agent task generation workflow with specialized agents and validation loops
-handoffs:
-  - label: Implement Tasks
-    agent: humaninloop:implement
-    prompt: Execute the generated tasks
-    send: true
-  - label: Run Analysis
-    agent: humaninloop:analyze
-    prompt: Analyze cross-artifact consistency
 ---
 
 # Multi-Agent Tasks Workflow

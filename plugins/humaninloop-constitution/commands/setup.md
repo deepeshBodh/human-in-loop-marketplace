@@ -1,9 +1,5 @@
 ---
 description: Create or update the project constitution using the Principal Architect agent.
-handoffs:
-  - label: Build Specification
-    agent: humaninloop:specify
-    prompt: Build a feature specification governed by the constitution. I want to build...
 ---
 
 ## User Input

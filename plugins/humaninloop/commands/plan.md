@@ -1,13 +1,5 @@
 ---
 description: Execute the multi-agent implementation planning workflow with specialized agents and validation loops
-handoffs:
-  - label: Create Tasks
-    agent: humaninloop:tasks
-    prompt: Generate tasks from the plan
-    send: true
-  - label: Run Checklist
-    agent: humaninloop:checklist
-    prompt: Create a checklist for implementation review
 ---
 
 # Multi-Agent Planning Workflow

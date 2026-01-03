@@ -1,9 +1,5 @@
 ---
 description: Create feature specification using multi-agent architecture with integrated checklist validation and priority loop
-handoffs:
-  - label: Build Technical Plan
-    agent: humaninloop:plan
-    prompt: Create a plan for the spec
 ---
 
 # Unified Specify Workflow with Priority Loop

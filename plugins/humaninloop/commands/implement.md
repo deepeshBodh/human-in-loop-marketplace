@@ -1,9 +1,5 @@
 ---
 description: Execute the implementation plan by processing and executing all tasks defined in tasks.md
-handoffs:
-  - label: Run Analysis
-    agent: humaninloop:analyze
-    prompt: Analyze cross-artifact consistency after implementation
 ---
 
 ## User Input
