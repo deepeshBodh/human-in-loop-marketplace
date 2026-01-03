@@ -20,12 +20,8 @@
   "commands": "./commands/",
   "skills": "./skills/",
   "agents": [
-    "./agents/codebase-discovery.md",
     "./agents/devils-advocate.md",
-    "./agents/plan-contract.md",
-    "./agents/plan-domain-model.md",
-    "./agents/plan-research.md",
-    "./agents/plan-validator.md",
+    "./agents/plan-architect.md",
     "./agents/principal-architect.md",
     "./agents/requirements-analyst.md",
     "./agents/task-generator.md",
