@@ -200,11 +200,13 @@ Verify versions are consistent across all manifest files:
 | `plugins/humaninloop-constitution/.claude-plugin/plugin.json` | `version` | CHANGELOG latest entry for this plugin |
 | `.claude-plugin/marketplace.json` | `version` | Release tag being created |
 | `CHANGELOG.md` | Latest `## [X.Y.Z]` | Git tag being created |
+| `ROADMAP.md` | `## Current State (vX.Y.Z)` | marketplace.json version |
 
 **Cross-checks**:
 - [ ] marketplace.json version ≥ highest plugin version
 - [ ] Each plugin mentioned in CHANGELOG has matching version in its plugin.json
 - [ ] No version number appears in CHANGELOG without corresponding plugin.json update
+- [ ] ROADMAP.md "Current State" version matches marketplace.json version
 
 ### 7. Plugin Dependency Validation
 For plugins with dependencies (e.g., `humaninloop` depends on `humaninloop-constitution`):
@@ -385,6 +387,7 @@ Your release readiness report should include:
 | humaninloop-constitution plugin.json | X.Y.Z | ... | ✅/❌ |
 | marketplace.json | X.Y.Z | ... | ✅/❌ |
 | CHANGELOG.md latest | X.Y.Z | ... | ✅/❌ |
+| ROADMAP.md Current State | X.Y.Z | ... | ✅/❌ |
 
 ## Documentation Status
 | Document | Status | Notes |
