@@ -40,7 +40,16 @@ Multi-agent specification-driven development workflow with integrated quality va
 
 **Agents:** 14 specialized agents for spec writing, validation, planning, task generation, and research
 **Commands:** `/humaninloop:specify`, `/humaninloop:plan`, `/humaninloop:tasks`, `/humaninloop:analyze`, `/humaninloop:checklist`, `/humaninloop:implement`
+**Skills:** 3 model-invoked skills for authoring and analysis
 **Requires:** `humaninloop-constitution` plugin
+
+#### Skills
+
+| Skill | Trigger Phrases | Description |
+|-------|-----------------|-------------|
+| `iterative-analysis` | "brainstorm", "deep analysis", "let's think through" | Progressive questioning with 2-3 options per question and synthesis |
+| `authoring-requirements` | "functional requirements", "FR-", "RFC 2119", "MUST SHOULD MAY" | Write FR-XXX format requirements with validation |
+| `authoring-user-stories` | "user story", "Given When Then", "P1", "P2", "P3" | Write prioritized user stories with acceptance scenarios |
 
 ### humaninloop-constitution
 
@@ -70,6 +79,7 @@ human-in-loop-marketplace/
 │   ├── humaninloop/               # Main workflow plugin
 │   │   ├── agents/                # 14 multi-agent workflow agents
 │   │   ├── commands/              # specify, plan, tasks, analyze, checklist, implement
+│   │   ├── skills/                # 3 model-invoked authoring skills
 │   │   ├── check-modules/         # Validation check modules
 │   │   ├── scripts/               # Shell utilities
 │   │   └── templates/             # Workflow templates

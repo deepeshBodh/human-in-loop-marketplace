@@ -6,6 +6,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and this pro
 
 ---
 
+## [0.2.7] - 2026-01-03
+
+New authoring skills for specification writing.
+
+### humaninloop 0.2.7
+
+#### New Skills
+- **authoring-requirements** - Write functional requirements using FR-XXX format with RFC 2119 keywords
+  - Triggered by: "functional requirements", "FR-", "SC-", "RFC 2119", "MUST SHOULD MAY"
+  - Includes validation script and reference documentation
+- **authoring-user-stories** - Write user stories with P1/P2/P3 priorities and Given/When/Then acceptance
+  - Triggered by: "user story", "acceptance scenario", "Given When Then", "P1", "P2", "P3"
+  - Includes validation script and example templates
+
+#### Documentation
+- Added ADR-004: Skill-Augmented Agents Architecture
+- Added ADR-005: Decoupled Agents Architecture
+
+---
+
 ## [0.2.6] - 2026-01-01
 
 Fix skill description parsing for proper model-invoked triggering.
@@ -170,6 +190,7 @@ Initial marketplace scaffold.
 
 ---
 
+[0.2.7]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.7
 [0.2.6]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.6
 [0.2.5]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.5
 [0.2.4]: https://github.com/deepeshBodh/human-in-loop-marketplace/releases/tag/v0.2.4
