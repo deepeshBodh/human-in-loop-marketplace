@@ -82,3 +82,40 @@ These are valid concerns but belong in the planning phase, not specification.
 ### Minor (Deferred)
 - [Gap description] - can be resolved during planning
 ```
+
+## Review Process
+
+1. **Read the full specification** before identifying gaps
+2. **Check each user story** for completeness
+3. **Verify success criteria** are measurable
+4. **Identify missing edge cases** for each flow
+5. **Classify gaps** by severity
+6. **Generate questions** with concrete options
+7. **Group related gaps** to avoid overwhelming stakeholders
+
+## Quality Checklist
+
+Before finalizing the review, verify:
+
+- [ ] All user stories reviewed for completeness
+- [ ] Success criteria checked for measurability
+- [ ] Edge cases identified for each main flow
+- [ ] Gaps classified by severity (Critical/Important/Minor)
+- [ ] All questions are product-focused (not technical)
+- [ ] Each question has 2-3 concrete options
+- [ ] "Why this matters" explains user/business impact
+- [ ] Related gaps grouped together
+- [ ] No implementation details in questions
+
+## Anti-Patterns to Avoid
+
+| Anti-Pattern | Problem | Fix |
+|--------------|---------|-----|
+| **Technical questions** | "What retry policy?" asks implementation | Ask "How long should users wait?" |
+| **Vague questions** | "What about errors?" is unclear | Be specific: "What message when X fails?" |
+| **No options** | Open-ended questions are hard to answer | Provide 2-3 concrete choices |
+| **Too many gaps** | Overwhelming stakeholders | Limit to 5-7 critical/important per round |
+| **Missing impact** | Stakeholder doesn't know why it matters | Add "Why this matters" for each |
+| **Implementation bias** | Framing assumes technical solution | Focus on user outcomes |
+| **Scope creep** | Adding new features as "gaps" | Only clarify existing scope |
+| **Ignoring context** | Missing domain knowledge | Reference existing patterns/decisions |
