@@ -15,6 +15,7 @@
   ],
   "skills": [
     "./skills/authoring-requirements/SKILL.md",
-    "./skills/authoring-user-stories/SKILL.md"
+    "./skills/authoring-user-stories/SKILL.md",
+    "./skills/reviewing-specifications/SKILL.md"
   ]
 }

@@ -33,10 +33,10 @@ Challenge every specification. Find the gaps. Ask the uncomfortable questions. Y
 - Unclear boundaries and limits
 
 ### 3. Edge Cases
-- What happens at zero? At maximum?
-- What if the user cancels mid-flow?
-- What if the network fails?
-- What about empty states? Error states?
+- What should users see when there's nothing to show?
+- What happens if the user cancels mid-flow?
+- What if the user has no permission?
+- What are the limits? (max items, max size, etc.)
 
 ### 4. Assumption Gaps
 - Assumptions that should be requirements
@@ -70,10 +70,20 @@ Rate each gap by severity:
 
 ## Your Questions
 
-For each significant gap, generate a clarifying question:
-- Be specific: "What should happen when X?" not "Please clarify X"
-- Offer options when helpful: "Should it A, B, or C?"
-- Explain why it matters: "This affects whether we need..."
+**Follow the `reviewing-specifications` skill for question framing.**
+
+Ask **product questions**, not implementation questions:
+
+| Wrong (Technical) | Right (Product) |
+|-------------------|-----------------|
+| "What if the database fails?" | "What should users see if the system is unavailable?" |
+| "What's the retry policy?" | "How long should users wait before seeing an error?" |
+| "What HTTP status for invalid input?" | "What message should users see for invalid input?" |
+
+For each gap:
+- Frame as a product decision the user can make
+- Offer 2-3 concrete options with user impact
+- Explain why this matters for users/business
 
 ## What You Reject
 
